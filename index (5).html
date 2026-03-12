@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookza Fun Tools</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f3e8ff 0%, #fce7f3 50%, #dbeafe 100%);
+            min-height: 100vh;
+            color: #1f2937;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid #e9d5ff;
+        }
+
+        .navbar-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 64px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            color: #9333ea;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #9333ea, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: none;
+            gap: 0.25rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            color: #374151;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            background: #f3e8ff;
+            color: #9333ea;
+        }
+
+        .nav-link svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .mobile-menu-btn {
+            display: block;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .mobile-menu-btn:hover {
+            background: #f3e8ff;
+        }
+
+        .mobile-menu-btn svg {
+            width: 24px;
+            height: 24px;
+            color: #9333ea;
+        }
+
+        .mobile-nav {
+            display: none;
+            background: white;
+            border-top: 1px solid #e9d5ff;
+            padding: 0.5rem;
+        }
+
+        .mobile-nav.active {
+            display: block;
+        }
+
+        .mobile-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .mobile-nav-link:hover {
+            background: #f3e8ff;
+            color: #9333ea;
+        }
+
+        @media (min-width: 768px) {
+            .nav-links {
+                display: flex;
+            }
+            .mobile-menu-btn {
+                display: none;
+            }
+            .mobile-nav {
+                display: none !important;
+            }
+        }
+
+        /* Main Content */
+        main {
+            padding-top: 80px;
+            padding-bottom: 3rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            overflow: hidden;
+            padding: 4rem 1rem;
+            text-align: center;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(168, 85, 247, 0.2), rgba(236, 72, 153, 0.2), rgba(59, 130, 246, 0.2));
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .hero-content {
+            position: relative;
+            max-width: 896px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #9333ea, #ec4899, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @media (min-width: 768px) {
+            .hero h1 {
+                font-size: 3.75rem;
+            }
+        }
+
+        .hero p {
+            font-size: 1.125rem;
+            color: #4b5563;
+            margin-bottom: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .hero p {
+                font-size: 1.25rem;
+            }
+        }
+
+        /* Ad Placeholder */
+        .ad-placeholder {
+            max-width: 672px;
+            margin: 0 auto 2rem;
+            padding: 1rem;
+            background: #f3f4f6;
+            border-radius: 1rem;
+            border: 2px dashed #d1d5db;
+        }
+
+        .ad-placeholder p {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+
+        .ad-box {
+            height: 96px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+        }
+
+        /* Tool Sections */
+        .tool-section {
+            padding: 4rem 1rem;
+        }
+
+        .section-pink { background: linear-gradient(135deg, #fdf2f8, #ffe4e6); }
+        .section-yellow { background: linear-gradient(135deg, #fefce8, #ffedd5); }
+        .section-green { background: linear-gradient(135deg, #f0fdf4, #d1fae5); }
+        .section-blue { background: linear-gradient(135deg, #eff6ff, #e0e7ff); }
+        .section-purple { background: linear-gradient(135deg, #faf5ff, #ede9fe); }
+
+        .container {
+            max-width: 896px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+
+        .card-header {
+            text-align: center;
+            padding: 2rem 2rem 1rem;
+        }
+
+        .card-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-icon.pink { background: linear-gradient(135deg, #f472b6, #f43f5e); }
+        .card-icon.yellow { background: linear-gradient(135deg, #facc15, #f97316); }
+        .card-icon.green { background: linear-gradient(135deg, #4ade80, #10b981); }
+        .card-icon.blue { background: linear-gradient(135deg, #60a5fa, #6366f1); }
+        .card-icon.purple { background: linear-gradient(135deg, #a78bfa, #8b5cf6); }
+
+        .card-icon svg {
+            width: 32px;
+            height: 32px;
+            color: white;
+        }
+
+        .card-title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-description {
+            color: #4b5563;
+        }
+
+        .card-content {
+            padding: 1.5rem 2rem 2rem;
+        }
+
+        /* Output Box */
+        .output-box {
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .output-box.pink { background: linear-gradient(90deg, #fce7f3, #ffe4e6); }
+        .output-box.yellow { background: linear-gradient(90deg, #fef3c7, #ffedd5); }
+        .output-box.green { background: linear-gradient(135deg, #dcfce7, #d1fae5); }
+        .output-box.blue { background: linear-gradient(90deg, #dbeafe, #e0e7ff); }
+
+        .output-text {
+            font-size: 2.25rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ec4899, #f43f5e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @media (min-width: 768px) {
+            .output-text {
+                font-size: 3rem;
+            }
+        }
+
+        .output-text.blue {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-pink { background: linear-gradient(135deg, #ec4899, #f43f5e); }
+        .btn-pink:hover { background: linear-gradient(135deg, #db2777, #e11d48); }
+
+        .btn-yellow { background: linear-gradient(135deg, #eab308, #f97316); }
+        .btn-yellow:hover { background: linear-gradient(135deg, #ca8a04, #ea580c); }
+
+        .btn-green { background: linear-gradient(135deg, #22c55e, #10b981); }
+        .btn-green:hover { background: linear-gradient(135deg, #16a34a, #059669); }
+
+        .btn-blue { background: linear-gradient(135deg, #3b82f6, #6366f1); }
+        .btn-blue:hover { background: linear-gradient(135deg, #2563eb, #4f46e5); }
+
+        .btn-purple { background: linear-gradient(135deg, #a855f7, #8b5cf6); }
+        .btn-purple:hover { background: linear-gradient(135deg, #9333ea, #7c3aed); }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #86efac;
+            color: #15803d;
+        }
+
+        .btn-outline:hover {
+            background: #f0fdf4;
+        }
+
+        .btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .btn-center {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.125rem;
+            border: 2px solid #fde68a;
+            border-radius: 0.75rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: #facc15;
+            box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.2);
+        }
+
+        .form-input.purple-border {
+            border-color: #e9d5ff;
+        }
+
+        .form-input.purple-border:focus {
+            border-color: #a855f7;
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
+        }
+
+        .form-input.green-border {
+            border-color: #bbf7d0;
+        }
+
+        .form-input.green-border:focus {
+            border-color: #4ade80;
+            box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.2);
+        }
+
+        .form-textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 1rem;
+            font-size: 1.125rem;
+            border: 2px solid #bbf7d0;
+            border-radius: 0.75rem;
+            outline: none;
+            resize: none;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .form-textarea:focus {
+            border-color: #4ade80;
+            box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.2);
+        }
+
+        .form-hint {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-box {
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-box.green { background: linear-gradient(135deg, #dcfce7, #d1fae5); }
+        .stat-box.emerald { background: linear-gradient(135deg, #d1fae5, #ccfbf1); }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #16a34a;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-number.emerald {
+            color: #059669;
+        }
+
+        .stat-label {
+            color: #4b5563;
+            font-weight: 500;
+        }
+
+        /* Emoji Output */
+        .emoji-output {
+            background: linear-gradient(90deg, #fef3c7, #ffedd5);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            word-break: break-word;
+            line-height: 1.625;
+        }
+
+        .emoji-text {
+            font-size: 1.875rem;
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .emoji-text {
+                font-size: 2.25rem;
+            }
+        }
+
+        /* ASCII Output */
+        .ascii-container {
+            position: relative;
+            background: #111827;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .ascii-copy-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem;
+            background: #374151;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .ascii-copy-btn:hover {
+            background: #4b5563;
+        }
+
+        .ascii-copy-btn svg {
+            width: 20px;
+            height: 20px;
+            color: #d1d5db;
+        }
+
+        .ascii-copy-btn.copied svg {
+            color: #4ade80;
+        }
+
+        .ascii-pre {
+            color: #4ade80;
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            line-height: 1.25;
+            white-space: pre;
+            margin: 0;
+        }
+
+        @media (min-width: 768px) {
+            .ascii-pre {
+                font-size: 0.875rem;
+            }
+        }
+
+        /* Footer */
+        footer {
+            background: #111827;
+            color: white;
+            padding: 3rem 1rem;
+        }
+
+        .footer-container {
+            max-width: 1152px;
+            margin: 0 auto;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .footer-grid {
+                grid-template-columns: 2fr 1fr 1fr;
+            }
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-logo svg {
+            width: 24px;
+            height: 24px;
+            color: #c084fc;
+        }
+
+        .footer-logo span {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .footer-text {
+            color: #9ca3af;
+        }
+
+        .footer-heading {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #c084fc;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a, .footer-links button {
+            color: #9ca3af;
+            text-decoration: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0;
+        }
+
+        .footer-links a:hover, .footer-links button:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #1f2937;
+            padding-top: 2rem;
+            text-align: center;
+        }
+
+        .footer-bottom p {
+            color: #6b7280;
+        }
+
+        .footer-bottom a {
+            color: #c084fc;
+            text-decoration: none;
+        }
+
+        .footer-bottom a:hover {
+            color: #a855f7;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 1rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+        }
+
+        .modal-close:hover {
+            background: #f3f4f6;
+        }
+
+        .modal-close svg {
+            width: 24px;
+            height: 24px;
+            color: #6b7280;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            max-height: 60vh;
+        }
+
+        .modal-body h3 {
+            color: #9333ea;
+            margin: 1.5rem 0 0.5rem;
+            font-size: 1.125rem;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            color: #4b5563;
+            line-height: 1.625;
+            margin-bottom: 1rem;
+        }
+
+        .modal-body ul {
+            margin-left: 1.5rem;
+            color: #4b5563;
+        }
+
+        .modal-body li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Utility */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="#" class="logo">
+                <svg class="logo-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                </svg>
+                <span class="logo-text">Bookza Fun Tools</span>
+            </a>
+            <div class="nav-links">
+                <a href="#name-generator" class="nav-link">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                    Funny Name
+                </a>
+                <a href="#emoji-generator" class="nav-link">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                    Emoji Text
+                </a>
+                <a href="#word-counter" class="nav-link">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                    Word Counter
+                </a>
+                <a href="#joke-generator" class="nav-link">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Jokes
+                </a>
+                <a href="#ascii-generator" class="nav-link">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
+                    ASCII Art
+                </a>
+            </div>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <svg id="menu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                <svg id="close-icon" class="hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        <div id="mobile-nav" class="mobile-nav">
+            <a href="#name-generator" class="mobile-nav-link" onclick="toggleMobileMenu()">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                Funny Name Generator
+            </a>
+            <a href="#emoji-generator" class="mobile-nav-link" onclick="toggleMobileMenu()">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                Emoji Text
+            </a>
+            <a href="#word-counter" class="mobile-nav-link" onclick="toggleMobileMenu()">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                Word Counter
+            </a>
+            <a href="#joke-generator" class="mobile-nav-link" onclick="toggleMobileMenu()">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Joke Generator
+            </a>
+            <a href="#ascii-generator" class="mobile-nav-link" onclick="toggleMobileMenu()">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
+                ASCII Art
+            </a>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-bg"></div>
+            <div class="hero-content">
+                <h1>Welcome to Bookza Fun Tools! 🎉</h1>
+                <p>Your one-stop destination for fun, creativity, and entertainment! Explore our collection of free online tools.</p>
+                <div class="ad-placeholder">
+                    <p>Advertisement</p>
+                    <div class="ad-box">Google AdSense Ad Placeholder</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Funny Name Generator -->
+        <section id="name-generator" class="tool-section section-pink">
+            <div class="container">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon pink">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                        </div>
+                        <h2 class="card-title">Funny Name Generator</h2>
+                        <p class="card-description">Generate hilarious and unique names for any occasion!</p>
+                    </div>
+                    <div class="card-content">
+                        <div class="output-box pink">
+                            <p id="funny-name" class="output-text">Click the button to generate!</p>
+                        </div>
+                        <div class="btn-center">
+                            <button class="btn btn-pink" onclick="generateFunnyName()">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                                Generate New Name
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emoji Text Generator -->
+        <section id="emoji-generator" class="tool-section section-yellow">
+            <div class="container">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon yellow">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                        </div>
+                        <h2 class="card-title">Emoji Text Generator</h2>
+                        <p class="card-description">Transform your text into a fun emoji-filled message!</p>
+                    </div>
+                    <div class="card-content">
+                        <div class="form-group">
+                            <label class="form-label">Enter your text:</label>
+                            <input type="text" id="emoji-input" class="form-input" placeholder="Type something fun...">
+                        </div>
+                        <div class="btn-center">
+                            <button class="btn btn-yellow" onclick="convertToEmoji()">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                                Convert to Emoji
+                            </button>
+                        </div>
+                        <div id="emoji-output-container" class="hidden" style="margin-top: 1.5rem;">
+                            <div class="emoji-output">
+                                <p id="emoji-output" class="emoji-text"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Word Counter -->
+        <section id="word-counter" class="tool-section section-green">
+            <div class="container">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon green">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                        </div>
+                        <h2 class="card-title">Quick Word Counter</h2>
+                        <p class="card-description">Instantly count words and characters in your text!</p>
+                    </div>
+                    <div class="card-content">
+                        <textarea id="word-input" class="form-textarea" placeholder="Type or paste your text here..." oninput="countWords()"></textarea>
+                        <div class="stats-grid">
+                            <div class="stat-box green">
+                                <p id="word-count" class="stat-number">0</p>
+                                <p class="stat-label">Words</p>
+                            </div>
+                            <div class="stat-box emerald">
+                                <p id="char-count" class="stat-number emerald">0</p>
+                                <p class="stat-label">Characters</p>
+                            </div>
+                        </div>
+                        <div class="btn-center">
+                            <button class="btn btn-outline" onclick="resetWordCounter()">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Random Joke Generator -->
+        <section id="joke-generator" class="tool-section section-blue">
+            <div class="container">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon blue">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <h2 class="card-title">Random Joke Generator</h2>
+                        <p class="card-description">Get a laugh with our collection of funny jokes!</p>
+                    </div>
+                    <div class="card-content">
+                        <div class="output-box blue">
+                            <p id="joke-text" class="output-text blue" style="font-size: 1.5rem;">Click the button for a joke!</p>
+                        </div>
+                        <div class="btn-center">
+                            <button class="btn btn-blue" onclick="generateJoke()">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                Generate Joke
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ASCII Art Text Generator -->
+        <section id="ascii-generator" class="tool-section section-purple">
+            <div class="container">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon purple">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
+                        </div>
+                        <h2 class="card-title">ASCII Art Text Generator</h2>
+                        <p class="card-description">Convert your text into cool ASCII art!</p>
+                    </div>
+                    <div class="card-content">
+                        <div class="form-group">
+                            <label class="form-label">Enter your text:</label>
+                            <input type="text" id="ascii-input" class="form-input purple-border" placeholder="Type something to convert..." maxlength="15">
+                            <p class="form-hint">Maximum 15 characters (a-z, 0-9, !, ?)</p>
+                        </div>
+                        <div class="btn-center">
+                            <button class="btn btn-purple" onclick="generateAsciiArt()">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
+                                Generate ASCII Art
+                            </button>
+                        </div>
+                        <div id="ascii-output-container" class="hidden" style="margin-top: 1.5rem;">
+                            <div class="ascii-container">
+                                <button class="ascii-copy-btn" onclick="copyAsciiArt()" title="Copy to clipboard">
+                                    <svg id="copy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                    <svg id="check-icon" class="hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                </button>
+                                <pre id="ascii-output" class="ascii-pre"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bottom Ad Placeholder -->
+        <section style="padding: 2rem 1rem;">
+            <div class="container">
+                <div class="ad-placeholder">
+                    <p>Advertisement</p>
+                    <div class="ad-box">Google AdSense Ad Placeholder</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div>
+                    <div class="footer-logo">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                        <span>Bookza Fun Tools</span>
+                    </div>
+                    <p class="footer-text">Your destination for fun, creativity, and entertainment! All tools are free and work instantly in your browser.</p>
+                </div>
+                <div>
+                    <h3 class="footer-heading">Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#name-generator">Funny Name Generator</a></li>
+                        <li><a href="#emoji-generator">Emoji Text</a></li>
+                        <li><a href="#word-counter">Word Counter</a></li>
+                        <li><a href="#joke-generator">Joke Generator</a></li>
+                        <li><a href="#ascii-generator">ASCII Art</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="footer-heading">Legal</h3>
+                    <ul class="footer-links">
+                        <li><button onclick="openModal('about-modal')">About</button></li>
+                        <li><button onclick="openModal('privacy-modal')">Privacy Policy</button></li>
+                        <li><button onclick="openModal('terms-modal')">Terms of Service</button></li>
+                        <li><a href="mailto:bookza.online@gmail.com">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Bookza Fun Tools. All rights reserved.</p>
+                <p style="margin-top: 0.5rem;">Contact: <a href="mailto:bookza.online@gmail.com">bookza.online@gmail.com</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- About Modal -->
+    <div id="about-modal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">About Bookza Fun Tools</h2>
+                <button class="modal-close" onclick="closeModal('about-modal')">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h3>Welcome to Bookza Fun Tools!</h3>
+                <p>Bookza Fun Tools is your one-stop destination for fun, creativity, and entertainment. We provide a collection of free online tools that work instantly in your browser without requiring any login or account creation.</p>
+                
+                <h3>Our Tools</h3>
+                <p>We currently offer 5 amazing tools:</p>
+                <ul>
+                    <li><strong>Funny Name Generator</strong> - Create hilarious and unique names for any occasion</li>
+                    <li><strong>Emoji Text Generator</strong> - Transform your text into fun emoji-filled messages</li>
+                    <li><strong>Quick Word Counter</strong> - Instantly count words and characters in your text</li>
+                    <li><strong>Random Joke Generator</strong> - Get a laugh with our collection of funny jokes</li>
+                    <li><strong>ASCII Art Text Generator</strong> - Convert your text into cool ASCII art</li>
+                </ul>
+                
+                <h3>Our Mission</h3>
+                <p>We believe that everyone deserves access to fun and creative tools without any barriers. That's why all our tools are completely free, require no registration, and work directly in your browser.</p>
+                
+                <h3>Contact Us</h3>
+                <p>Have questions or suggestions? We'd love to hear from you! Email us at <a href="mailto:bookza.online@gmail.com">bookza.online@gmail.com</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div id="privacy-modal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Privacy Policy</h2>
+                <button class="modal-close" onclick="closeModal('privacy-modal')">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Last Updated:</strong> March 12, 2024</p>
+                
+                <h3>Introduction</h3>
+                <p>At Bookza Fun Tools, we take your privacy seriously. This Privacy Policy explains how we collect, use, and protect your information when you use our website.</p>
+                
+                <h3>Information We Collect</h3>
+                <p><strong>We do not collect any personal information.</strong> All our tools work entirely in your browser, and we do not store any data you input into our tools.</p>
+                
+                <h3>How We Use Your Information</h3>
+                <p>Since we don't collect any personal information, we don't use your data for any purpose. Your text inputs are processed locally in your browser and are never sent to our servers.</p>
+                
+                <h3>Cookies and Tracking</h3>
+                <p>We may use cookies for essential website functionality. We do not use tracking cookies or third-party analytics that identify you personally.</p>
+                
+                <h3>Third-Party Services</h3>
+                <p>We may display advertisements through Google AdSense. These third parties may use cookies to serve ads based on your browsing history. Please refer to Google's Privacy Policy for more information.</p>
+                
+                <h3>Data Security</h3>
+                <p>Since all processing happens locally in your browser, your data remains secure on your device. We never transmit your inputs over the internet.</p>
+                
+                <h3>Children's Privacy</h3>
+                <p>Our website is suitable for all ages. We do not knowingly collect any information from children under 13.</p>
+                
+                <h3>Changes to This Policy</h3>
+                <p>We may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated date.</p>
+                
+                <h3>Contact Us</h3>
+                <p>If you have any questions about this Privacy Policy, please contact us at <a href="mailto:bookza.online@gmail.com">bookza.online@gmail.com</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms of Service Modal -->
+    <div id="terms-modal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Terms of Service</h2>
+                <button class="modal-close" onclick="closeModal('terms-modal')">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Last Updated:</strong> March 12, 2024</p>
+                
+                <h3>Acceptance of Terms</h3>
+                <p>By accessing and using Bookza Fun Tools, you accept and agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our website.</p>
+                
+                <h3>Use of Our Services</h3>
+                <p>Our tools are provided for personal, non-commercial use. You may use our tools to generate content, count words, create ASCII art, and enjoy jokes.</p>
+                
+                <h3>Prohibited Activities</h3>
+                <p>When using our website, you agree not to:</p>
+                <ul>
+                    <li>Use our tools for any illegal purpose</li>
+                    <li>Attempt to damage, disable, or interfere with our website</li>
+                    <li>Use automated means to access our tools without permission</li>
+                    <li>Reproduce, duplicate, copy, sell, or resell any portion of our services</li>
+                </ul>
+                
+                <h3>Intellectual Property</h3>
+                <p>The content generated by our tools is yours to use. However, the website design, logos, and tool functionality are the property of Bookza Fun Tools.</p>
+                
+                <h3>Disclaimer of Warranties</h3>
+                <p>Our tools are provided "as is" without any warranties. We do not guarantee that our tools will always be available, error-free, or meet your specific requirements.</p>
+                
+                <h3>Limitation of Liability</h3>
+                <p>Bookza Fun Tools shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of our services.</p>
+                
+                <h3>Changes to Terms</h3>
+                <p>We reserve the right to modify these Terms of Service at any time. Changes will be effective immediately upon posting to this page.</p>
+                
+                <h3>Governing Law</h3>
+                <p>These terms shall be governed by and construed in accordance with the laws of your jurisdiction.</p>
+                
+                <h3>Contact Information</h3>
+                <p>If you have any questions about these Terms of Service, please contact us at <a href="mailto:bookza.online@gmail.com">bookza.online@gmail.com</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const mobileNav = document.getElementById('mobile-nav');
+            const menuIcon = document.getElementById('menu-icon');
+            const closeIcon = document.getElementById('close-icon');
+            
+            mobileNav.classList.toggle('active');
+            menuIcon.classList.toggle('hidden');
+            closeIcon.classList.toggle('hidden');
+        }
+
+        // Modal Functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function closeModalOnOverlay(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.active').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Funny Name Generator
+        const funnyFirstNames = [
+            'Bubbles', 'Wobble', 'Snickers', 'Fuzzy', 'Zippy', 'Noodle', 'Biscuit', 'Wiggles', 
+            'Giggles', 'Pickle', 'Muffin', 'Squishy', 'Dizzy', 'Jelly', 'Popcorn', 'Twinkle',
+            'Squeaky', 'Bouncy', 'Fluffy', 'Wacky', 'Zany', 'Quirky', 'Silly', 'Goofy',
+            'Chuckles', 'Tater', 'Nugget', 'Pudding', 'Cookie', 'Sprinkles', 'Marshmallow',
+            'Bubblegum', 'Cotton', 'Candy', 'Lollipop', 'Gummy', 'Bear', 'Cupcake', 'Donut'
+        ];
+
+        const funnyLastNames = [
+            'McFlufferson', 'Wobblebottom', 'Gigglepants', 'Snickerdoodle', 'Fuzzlewump',
+            'Zippitydoo', 'Noodleton', 'Biscuitworth', 'Wigglesworth', 'Picklebottom',
+            'Muffintop', 'Squishypants', 'Dizzydoodle', 'Jellybean', 'Popcornicus',
+            'Twinkletoes', 'Squeakerson', 'Bouncypants', 'Fluffernutter', 'Wackydoo',
+            'Zanypants', 'Quirkleton', 'Sillypants', 'Goofball', 'Chucklesworth',
+            'Tatertot', 'Nuggetson', 'Puddingworth', 'Cookiemonster', 'Sprinkleton',
+            'Marshmallowbottom', 'Bubblegump', 'Cottoncandy', 'Lollipop', 'Gummybear'
+        ];
+
+        function generateFunnyName() {
+            const first = funnyFirstNames[Math.floor(Math.random() * funnyFirstNames.length)];
+            const last = funnyLastNames[Math.floor(Math.random() * funnyLastNames.length)];
+            document.getElementById('funny-name').textContent = first + ' ' + last;
+        }
+
+        // Generate initial name
+        generateFunnyName();
+
+        // Emoji Text Generator
+        const emojiMap = {
+            'a': '🍎', 'b': '🐝', 'c': '🐱', 'd': '🐶', 'e': '🥚', 'f': '🌸', 'g': '🍇', 'h': '🏠',
+            'i': '🍦', 'j': '🤹', 'k': '🔑', 'l': '🦁', 'm': '🌙', 'n': '📰', 'o': '🐙', 'p': '🍕',
+            'q': '👸', 'r': '🌈', 's': '🌟', 't': '🌴', 'u': '☂️', 'v': '🎻', 'w': '🍉', 'x': '❌',
+            'y': '🧘', 'z': '🦓', ' ': '✨', '!': '❗', '?': '❓', '.': '🔵', ',': '🌸'
+        };
+
+        function convertToEmoji() {
+            const input = document.getElementById('emoji-input').value.toLowerCase();
+            const output = input.split('').map(char => emojiMap[char] || char).join(' ');
+            document.getElementById('emoji-output').textContent = output;
+            document.getElementById('emoji-output-container').classList.remove('hidden');
+        }
+
+        // Word Counter
+        function countWords() {
+            const text = document.getElementById('word-input').value;
+            const charCount = text.length;
+            const wordCount = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+            
+            document.getElementById('char-count').textContent = charCount;
+            document.getElementById('word-count').textContent = wordCount;
+        }
+
+        function resetWordCounter() {
+            document.getElementById('word-input').value = '';
+            document.getElementById('word-count').textContent = '0';
+            document.getElementById('char-count').textContent = '0';
+        }
+
+        // Joke Generator
+        const jokes = [
+            "Why don't scientists trust atoms? Because they make up everything!",
+            "Why did the scarecrow win an award? He was outstanding in his field!",
+            "Why don't eggs tell jokes? They'd crack each other up!",
+            "What do you call a fake noodle? An impasta!",
+            "Why did the math book look so sad? Because it had too many problems.",
+            "What do you call a bear with no teeth? A gummy bear!",
+            "Why did the cookie go to the doctor? Because it was feeling crumbly!",
+            "What do you get when you cross a snowman with a vampire? Frostbite!",
+            "Why don't skeletons fight each other? They don't have the guts!",
+            "What do you call a sleeping dinosaur? A dino-snore!",
+            "Why did the tomato turn red? Because it saw the salad dressing!",
+            "What do you call a fish with no eyes? Fsh!",
+            "Why did the golfer bring two pairs of pants? In case he got a hole in one!",
+            "What do you call a can opener that doesn't work? A can't opener!",
+            "Why did the invisible man turn down the job offer? He couldn't see himself doing it!",
+            "What do you get when you cross a snowman and a dog? Frostbite!",
+            "Why did the bicycle fall over? Because it was two-tired!",
+            "What do you call a boomerang that doesn't come back? A stick!",
+            "Why don't oysters donate to charity? Because they're shellfish!",
+            "What do you call a pile of cats? A meowtain!",
+            "Why did the coffee file a police report? It got mugged!",
+            "What do you call a belt made of watches? A waist of time!",
+            "Why did the banana go to the doctor? It wasn't peeling well!",
+            "What do you call a dinosaur with an extensive vocabulary? A thesaurus!",
+            "Why did the stadium get hot after the game? All the fans left!",
+            "What do you call a fish wearing a crown? A king fish!",
+            "Why did the music teacher go to jail? Because she got caught with sharp objects!",
+            "What do you call a sleeping bull? A bulldozer!",
+            "Why did the picture go to jail? Because it was framed!",
+            "What do you call a group of unorganized cats? A cat-astrophe!"
+        ];
+
+        function generateJoke() {
+            const joke = jokes[Math.floor(Math.random() * jokes.length)];
+            document.getElementById('joke-text').textContent = joke;
+        }
+
+        // Generate initial joke
+        generateJoke();
+
+        // ASCII Art Generator
+        const asciiPatterns = {
+            'a': ['  ___  ', ' / _ \\ ', '/ /_\ \\', '|  _  |', '| | | |', '\\_| |_/'],
+            'b': ['______ ', '| ___ \\', '| |_/ /', '| ___ \\', '| |_/ /', '\\____/ '],
+            'c': [' _____ ', '/  __ \\', '| /  \/', '| |    ', '| \\__/|', ' \\____/'],
+            'd': ['______ ', '|  _  \\', '| | | |', '| | | |', '| |_| |', '|_____/ '],
+            'e': [' _____ ', '|  ___|', '| |__  ', '|  __| ', '| |___ ', '\\____/'],
+            'f': ['______', '|  ___|', '| |_   ', '|  _|  ', '| |    ', '\\_|    '],
+            'g': [' _____ ', '|  __ \\', '| |  \/', '| | __ ', '| |_\\ |', ' \\____/'],
+            'h': [' _   _ ', '| | | |', '| |_| |', '|  _  |', '| | | |', '\\_| |_/'],
+            'i': [' _____ ', '|_   _|', '  | |  ', '  | |  ', ' _| |_ ', '|_____|'],
+            'j': ['   ___ ', '  |_  |', '    | |', '    | |', '/\\__/ /', '\\____/ '],
+            'k': [' _   __', '| | / /', '| |/ / ', '|    \\ ', '| |\\  \\', '\\_| \\_/'],
+            'l': [' _     ', '| |    ', '| |    ', '| |    ', '| |____', '|_____/'],
+            'm': ['___  ___', '|  \\/  |', '| .  . |', '| |\\/| |', '| |  | |', '\\_|  |_/'],
+            'n': [' _   _ ', '| \\ | |', '|  \\| |', '| . ` |', '| |\\  |', '\\_| \\_/'],
+            'o': [' _____ ', '|  _  |', '| | | |', '| | | |', '| |_| |', '|_____/'],
+            'p': ['______ ', '| ___ \\', '| |_/ /', '|  __/ ', '| |    ', '\\_|    '],
+            'q': [' _____ ', '|  _  |', '| | | |', '| | | |', '| |_| |', ' \\__\\_|'],
+            'r': ['______ ', '| ___ \\', '| |_/ /', '|    / ', '| |\\ \\ ', '\\_| \\_/'],
+            's': [' _____ ', '/  ___|', '\\ `--. ', ' `--. \\', '/\\__/ /', '\\____/ '],
+            't': [' _____ ', '|_   _|', '  | |  ', '  | |  ', '  | |  ', '  \\_/  '],
+            'u': [' _   _ ', '| | | |', '| | | |', '| | | |', '| |_| |', ' \\___/ '],
+            'v': [' _   _ ', '| | | |', '| | | |', '| | | |', '  / /  ', ' /_/   '],
+            'w': [' _    _ ', '| |  | |', '| |  | |', '| |  | |', '  / /   ', ' / /    '],
+            'x': ['       ', '  / /  ', '   /   ', '  / /  ', '       ', '       '],
+            'y': [' _   _ ', '| | | |', '| |_| |', ' \\__  |', '   / / ', '  /_/  '],
+            'z': ['______', '|___  |', '   / / ', '  / /  ', ' / /___', '|_____|'],
+            ' ': ['  ', '  ', '  ', '  ', '  ', '  '],
+            '0': [' _____ ', '|  _  |', '| | | |', '| | | |', '| |_| |', '|_____|'],
+            '1': [' __  ', '/  | ', '   | ', '   | ', '_  |_', '|____|'],
+            '2': [' _____ ', '/ __  |', '    / /', '   / / ', '  / /__', ' |_____|'],
+            '3': [' _____ ', '|____ |', '    / /', '    / /', '  / /  ', ' /_/   '],
+            '4': ['   ___ ', '  /   |', ' / /| |', '/ /_| |', '    | |', '    |_/ '],
+            '5': [' _____ ', '|  ___|', '|___  |', '     |', '  / /  ', ' /_/   '],
+            '6': ['  __  ', ' / _| ', '/ /__ ', '|  _  |', '| |_| |', ' \\____/'],
+            '7': ['______', '|___  |', '   / / ', '  / /  ', ' / /   ', '/_/    '],
+            '8': [' _____ ', '|  _  |', '  / /  ', ' / /   ', '| |_| |', '|_____|'],
+            '9': [' _____ ', '|  _  |', '| |_| |', '|____ |', '   / / ', '  /_/  '],
+            '!': [' _ ', '| |', '| |', '| |', '|_|', '(_)'],
+            '?': [' ___ ', '|__ |', '   ) |', '  / / ', ' |_|  ', ' (_)  ']
+        };
+
+        function generateAsciiArt() {
+            const input = document.getElementById('ascii-input').value.toLowerCase();
+            
+            if (!input.trim()) return;
+            
+            const letters = [];
+            for (const char of input) {
+                const pattern = asciiPatterns[char];
+                if (pattern) {
+                    letters.push(pattern);
+                }
+            }
+            
+            if (letters.length === 0) {
+                document.getElementById('ascii-output').textContent = 'Please enter valid characters (a-z, 0-9, !, ?)';
+                document.getElementById('ascii-output-container').classList.remove('hidden');
+                return;
+            }
+            
+            const lines = [];
+            for (let i = 0; i < 6; i++) {
+                let line = '';
+                for (const letter of letters) {
+                    line += letter[i] || '';
+                }
+                lines.push(line);
+            }
+            
+            document.getElementById('ascii-output').textContent = lines.join('\n');
+            document.getElementById('ascii-output-container').classList.remove('hidden');
+        }
+
+        function copyAsciiArt() {
+            const text = document.getElementById('ascii-output').textContent;
+            navigator.clipboard.writeText(text);
+            
+            const copyIcon = document.getElementById('copy-icon');
+            const checkIcon = document.getElementById('check-icon');
+            const copyBtn = document.querySelector('.ascii-copy-btn');
+            
+            copyIcon.classList.add('hidden');
+            checkIcon.classList.remove('hidden');
+            copyBtn.classList.add('copied');
+            
+            setTimeout(() => {
+                copyIcon.classList.remove('hidden');
+                checkIcon.classList.add('hidden');
+                copyBtn.classList.remove('copied');
+            }, 2000);
+        }
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
