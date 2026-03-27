@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CounterPick – Overwatch 2 Cyberpunk Counter Tool</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-orb orb-a"></div>
+  <div class="bg-orb orb-b"></div>
+  <div class="scanlines"></div>
+
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">OVERWATCH 2 // LIVE COUNTER TOOL</p>
+      <h1>CounterPick</h1>
+      <p class="subtitle">Build the enemy team, add the map, and get the best hero, bans, perks, and matchup help instantly.</p>
+    </div>
+
+    <div class="topbar-actions">
+      <a class="btn btn-secondary" href="hero-insights.html">Hero Patch &amp; Meta</a>
+      <div class="status-chip" id="status-chip">Pick a map and enemy team to start</div>
+      <button id="reset-btn" class="btn btn-reset" type="button">Reset</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel glass controls-panel full-span">
+      <div class="panel-head">
+        <h2>Draft Controls</h2>
+        <span class="panel-meta">Fast setup</span>
+      </div>
+
+      <div class="control-grid three-up">
+        <div class="select-card">
+          <span class="control-label">Pick your role</span>
+          <div class="role-bar" id="role-bar">
+            <button class="role-btn active" data-role="All" type="button"><span class="role-icon">◎</span><span>All</span></button>
+            <button class="role-btn" data-role="Tank" type="button"><span class="role-icon">🛡</span><span>Tank</span></button>
+            <button class="role-btn" data-role="Damage" type="button"><span class="role-icon">✦</span><span>Damage</span></button>
+            <button class="role-btn" data-role="Support" type="button"><span class="role-icon">✚</span><span>Support</span></button>
+          </div>
+          <small>The best pick stays inside this role.</small>
+        </div>
+
+        <div class="select-card">
+          <span class="control-label">Map pick</span>
+          <button id="map-select-btn" class="picker-trigger empty" type="button">Choose a map</button>
+          <small>Grouped by mode and sorted A to Z.</small>
+        </div>
+
+        <div class="select-card">
+          <span class="control-label">Hero matchup lookup</span>
+          <button id="hero-lookup-btn" class="picker-trigger empty" type="button">Choose one hero</button>
+          <small>See what this hero likes to face and what punishes it.</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel glass selection-panel">
+      <div class="panel-head">
+        <h2>Enemy Team</h2>
+        <span class="panel-meta" id="enemy-count">0 / 5 selected</span>
+      </div>
+      <p class="panel-copy">Click a slot. You get only heroes from that role, and the same hero cannot be picked twice.</p>
+
+      <div class="slot-groups">
+        <div class="slot-group">
+          <div class="slot-role-title">Tank</div>
+          <button class="hero-slot tank-slot" data-slot="tank" data-role="Tank" type="button"></button>
+        </div>
+
+        <div class="slot-group">
+          <div class="slot-role-title">Damage</div>
+          <div class="slot-row">
+            <button class="hero-slot damage-slot" data-slot="damage1" data-role="Damage" type="button"></button>
+            <button class="hero-slot damage-slot" data-slot="damage2" data-role="Damage" type="button"></button>
+          </div>
+        </div>
+
+        <div class="slot-group">
+          <div class="slot-role-title">Support</div>
+          <div class="slot-row">
+            <button class="hero-slot support-slot" data-slot="support1" data-role="Support" type="button"></button>
+            <button class="hero-slot support-slot" data-slot="support2" data-role="Support" type="button"></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel glass selection-panel">
+      <div class="panel-head">
+        <h2>Your Current Hero</h2>
+        <span class="panel-meta" id="player-count">0 / 1 selected</span>
+      </div>
+      <p class="panel-copy">Optional. Used to improve bans and compare whether the best pick is worth switching to.</p>
+
+      <div class="select-card no-margin">
+        <span class="control-label">Choose your hero</span>
+        <button id="player-hero-btn" class="picker-trigger empty" type="button">No hero selected</button>
+      </div>
+    </section>
+
+    <section class="panel glass results-panel">
+      <div class="panel-head">
+        <h2>Best Pick</h2>
+        <span class="panel-meta">Map + enemy team</span>
+      </div>
+      <div id="results-container" class="results-container">
+        <div class="empty-state">
+          <div class="empty-icon">◎</div>
+          <h3>No draft yet</h3>
+          <p>Pick a map and at least one enemy hero to see your best pick and backup options.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel glass ban-panel">
+      <div class="panel-head">
+        <h2>Ban Suggestions</h2>
+        <span class="panel-meta">Threat control</span>
+      </div>
+      <div id="ban-container" class="ban-list">
+        <div class="empty-state compact">
+          <h3>No bans yet</h3>
+          <p>Add a draft to see the two biggest problem heroes to remove.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel glass perks-panel full-span">
+      <div class="panel-head">
+        <h2>Best Perks</h2>
+        <span class="panel-meta">1 minor + 1 major</span>
+      </div>
+      <div id="perk-container" class="perk-container">
+        <div class="empty-state compact">
+          <h3>No perk plan yet</h3>
+          <p>Your best hero will generate 2 minor perks and 2 major perks. The app will recommend exactly one minor and one major.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel glass lookup-panel full-span">
+      <div class="panel-head">
+        <h2>Hero Matchup Lookup</h2>
+        <span class="panel-meta">Role order + A to Z</span>
+      </div>
+      <div id="lookup-container" class="lookup-grid">
+        <div class="empty-state compact">
+          <h3>No hero selected</h3>
+          <p>Pick one hero from the lookup bar to see counters, threats, and quick tips.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="slot-modal" class="modal hidden" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal="true"></div>
+    <div class="modal-panel glass">
+      <div class="panel-head modal-head">
+        <h2 id="modal-title">Pick a hero</h2>
+        <button class="icon-btn" id="close-modal-btn" type="button">✕</button>
+      </div>
+      <p class="panel-copy" id="modal-copy">Choose one item.</p>
+      <div id="modal-hero-list" class="modal-hero-list"></div>
+    </div>
+  </div>
+
+  <div id="tooltip" class="tooltip hidden" role="tooltip" aria-hidden="true"></div>
+
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
