@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CounterPick – Strategy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=7">
+  <style>
+    .map-pick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+    .map-pick-btn{background:var(--bg-card-alt);border:2px solid var(--border);border-radius:10px;padding:8px 6px;cursor:pointer;text-align:center;transition:all .15s}
+    .map-pick-btn:hover{border-color:var(--gold);background:var(--bg-hover)}
+    .map-pick-btn.selected{border-color:var(--gold-bright);background:var(--gold-dim)}
+    .map-pick-btn img{width:100%;height:56px;object-fit:cover;border-radius:6px;margin-bottom:4px}
+    .map-pick-btn .no-img{width:100%;height:56px;border-radius:6px;background:var(--bg-hover);display:grid;place-items:center;font-size:10px;color:var(--text-secondary);margin-bottom:4px}
+    .map-pick-name{font-size:11px;color:var(--text);font-weight:600;line-height:1.2}
+    .deck-card{background:var(--bg-card-alt);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
+    .deck-card.recommended{border-color:var(--gold);background:linear-gradient(135deg,var(--gold-dim),var(--bg-card-alt))}
+    .deck-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+    .deck-label.best{color:var(--gold-bright)}
+    .deck-label.alt{color:var(--text-secondary)}
+    .deck-roster{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+    .deck-hero{display:flex;flex-direction:column;align-items:center;gap:4px;width:64px}
+    .deck-hero img{width:52px;height:52px;border-radius:10px;object-fit:cover;border:2px solid var(--border)}
+    .deck-hero .hero-n{font-size:10px;color:var(--text);font-weight:600;text-align:center;line-height:1.15}
+    .deck-hero .hero-r{font-size:9px;color:var(--text-secondary);text-transform:uppercase}
+    .deck-why{font-size:13px;color:var(--text-secondary);line-height:1.55;margin-top:8px}
+    .deck-tag{display:inline-block;font-size:10px;padding:3px 8px;border-radius:5px;font-weight:600;margin-right:4px;margin-bottom:4px}
+    .mode-group-title{font-size:13px;font-weight:700;color:var(--gold);margin:14px 0 8px;text-transform:uppercase;letter-spacing:.5px}
+    .queue-toggle{display:flex;gap:0;border:2px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px}
+    .queue-toggle-btn{flex:1;padding:10px 16px;background:var(--bg-card-alt);color:var(--text-secondary);font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .15s;text-align:center}
+    .queue-toggle-btn:hover{background:var(--bg-hover)}
+    .queue-toggle-btn.active{background:var(--gold-dim);color:var(--gold-bright);border-color:var(--gold)}
+    .deck-section-title{font-size:14px;font-weight:700;color:var(--gold);margin:16px 0 6px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="logo">
+        <div class="logo-icon">CP</div>
+        <div>
+          <h1>CounterPick</h1>
+          <p class="eyebrow">OVERWATCH 2 COUNTER TOOL</p>
+        </div>
+      </div>
+    </div>
+    <nav class="topbar-nav">
+      <a class="nav-link" href="index.html">Flex Queue</a>
+      <a class="nav-link" href="open-queue.html">Open Queue</a>
+      <a class="nav-link" href="hero-insights.html">Patch &amp; Meta</a>
+      <a class="nav-link" href="tip.html">Tip of the Day</a>
+      <a class="nav-link active" href="strategy.html">Strategy</a>
+    </nav>
+    <div class="topbar-actions"></div>
+  </header>
+
+  <main style="padding:16px 20px;max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
+
+    <section class="card">
+      <div class="card-header">
+        <h2>Queue Mode</h2>
+      </div>
+      <div class="queue-toggle" id="queue-toggle">
+        <button class="queue-toggle-btn active" data-queue="flex" type="button">Flex Queue (1-2-2)</button>
+        <button class="queue-toggle-btn" data-queue="open" type="button">Open Queue (6 any)</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-header">
+        <h2>Pick a Map</h2>
+        <span class="badge badge-orange" id="mode-label">—</span>
+      </div>
+      <p style="color:var(--text-secondary);font-size:13px;margin-bottom:12px">Select a map to see the best team compositions.</p>
+      <div id="map-grid"></div>
+    </section>
+
+    <section class="card card-accent" id="deck-section" style="display:none">
+      <div class="card-header">
+        <h2 id="deck-map-name">—</h2>
+        <span class="badge badge-orange" id="deck-mode">—</span>
+      </div>
+      <div id="deck-map-img" style="margin-bottom:14px"></div>
+      <div id="deck-container"></div>
+    </section>
+
+  </main>
+
+  <script src="data.js"></script>
+  <script>
+  (function () {
+    const HERO_BY_NAME = Object.fromEntries(HERO_DB.map(h => [h.name, h]));
+
+    const MAPS = {
+      Escort: ['Circuit Royal', 'Dorado', 'Havana', 'Junkertown', 'Rialto', 'Route 66', 'Shambali Monastery', 'Watchpoint: Gibraltar'],
+      Hybrid: ['Blizzard World', 'Eichenwalde', 'Hollywood', "King's Row", 'Midtown', 'Numbani', 'Paraiso'],
+      Control: ['Antarctic Peninsula', 'Busan', 'Ilios', 'Lijiang Tower', 'Nepal', 'Oasis', 'Samoa'],
+      Push: ['Colosseo', 'Esperança', 'New Queen Street', 'Runasapi'],
+      Flashpoint: ['New Junk City', 'Suravasa']
+    };
+
+    const MAP_IMAGES = {
+      'Antarctic Peninsula': 'assets/maps/Antarctic Peninsula.jpg',
+      'Blizzard World': 'assets/maps/Blizzard World.jpg',
+      'Busan': 'assets/maps/Busan.jpg',
+      'Circuit Royal': 'assets/maps/Circuit Royal.jpg',
+      'Colosseo': 'assets/maps/Colosseo.jpg',
+      'Dorado': 'assets/maps/Dorado.jpg',
+      'Eichenwalde': 'assets/maps/Eichenwalde.jpeg',
+      'Esperança': 'assets/maps/Esperanca.jpeg',
+      'Havana': 'assets/maps/Havana.jpg',
+      'Hollywood': 'assets/maps/Hollywood.jpg',
+      'Ilios': 'assets/maps/Ilios.jpg',
+      'Junkertown': 'assets/maps/Junkertown.png',
+      "King's Row": 'assets/maps/Kings Row.jpg',
+      'Lijiang Tower': 'assets/maps/Lijiang Tower.jpeg',
+      'Midtown': 'assets/maps/Midtown.jpg',
+      'Nepal': 'assets/maps/Nepal.jpg',
+      'New Junk City': 'assets/maps/New Junk City.jpg',
+      'New Queen Street': 'assets/maps/New Queen Street.jpg',
+      'Numbani': 'assets/maps/Numbani.jpg',
+      'Oasis': 'assets/maps/Oasis.jpg',
+      'Paraiso': 'assets/maps/Paraiso.jpg',
+      'Rialto': 'assets/maps/Rialto.jpg',
+      'Route 66': 'assets/maps/Route 66.png',
+      'Runasapi': 'assets/maps/Runasapi.jpg',
+      'Samoa': 'assets/maps/Samoa.jpg',
+      'Shambali Monastery': 'assets/maps/Shambali Monastery.jpg',
+      'Suravasa': 'assets/maps/Suravasa.jpg',
+      'Watchpoint: Gibraltar': 'assets/maps/Watchpoint Gibraltar.jpg'
+    };
+
+    // ── FLEX QUEUE Strategy data: 2 comps per map (best + alternative) ──
+    const FLEX_STRATS = {
+      // === ESCORT ===
+      'Circuit Royal': {
+        best: { tank:'Sigma', dps:['Widowmaker','Ashe'], sup:['Ana','Baptiste'], why:'Long sightlines favor double sniper pressure. Sigma controls high ground with Accretion and barrier. Ana + Baptiste provide burst healing and anti-nade combos from range.' },
+        alt:  { tank:'Orisa', dps:['Hanzo','Sojourn'], sup:['Kiriko','Mercy'], why:'Orisa fortifies choke points while Hanzo gets easy Storm Arrows on grouped enemies. Sojourn covers mid-range. Kiriko cleanses anti-nade and Mercy damage boosts sightline DPS.' }
+      },
+      'Dorado': {
+        best: { tank:'Reinhardt', dps:['Cassidy','Mei'], sup:['Ana','Lúcio'], why:'Tight streets reward brawl. Reinhardt pins through narrow corridors while Mei walls off retreats. Cassidy handles flankers. Lúcio speeds the team through chokes and Ana lands easy nades on clustered fights.' },
+        alt:  { tank:'Sigma', dps:['Junkrat','Hanzo'], sup:['Baptiste','Moira'], why:'Junkrat thrives in Dorado\'s tight angles with bouncing grenades. Sigma absorbs spam. Hanzo scouts with Sonic Arrow. Baptiste and Moira sustain through the constant poke.' }
+      },
+      'Havana': {
+        best: { tank:'Sigma', dps:['Widowmaker','Cassidy'], sup:['Ana','Mercy'], why:'Open streets with long angles. Widowmaker dominates from rooftops, Mercy damage boosts her. Sigma plays corners with rock and shield. Ana can anti-nade from safety at range.' },
+        alt:  { tank:'Orisa', dps:['Ashe','Sojourn'], sup:['Baptiste','Kiriko'], why:'Orisa anchors the payload with Fortify. Ashe + Sojourn double up on mid-range burst. Baptiste Immortality Field saves against sniper picks, Kiriko cleanses and teleports to high ground.' }
+      },
+      'Junkertown': {
+        best: { tank:'Ramattra', dps:['Bastion','Torbjörn'], sup:['Baptiste','Ana'], why:'Wide open first point lets Bastion shred from range. Ramattra blocks with barrier then punishes in Nemesis form. Torbjörn turret controls flanks. Baptiste and Ana provide massive sustain.' },
+        alt:  { tank:'Sigma', dps:['Widowmaker','Ashe'], sup:['Mercy','Ana'], why:'Double long-range hitscan with Mercy pocket. Sigma uses high ground advantage. Ana anti-nades pushes and keeps the backline alive.' }
+      },
+      'Rialto': {
+        best: { tank:'Sigma', dps:['Hanzo','Ashe'], sup:['Ana','Baptiste'], why:'Canal sightlines and bridge angles reward poke comp. Sigma controls space with Accretion. Hanzo and Ashe cross-fire from different angles. Ana + Baptiste layered healing keeps the team up.' },
+        alt:  { tank:'Reinhardt', dps:['Reaper','Mei'], sup:['Lúcio','Moira'], why:'Indoor sections and tight bridge fights reward brawl. Reinhardt swings through doorways. Reaper melts tanks up close. Mei walls off supports. Lúcio speeds through chokes.' }
+      },
+      'Route 66': {
+        best: { tank:'Sigma', dps:['Widowmaker','Cassidy'], sup:['Ana','Mercy'], why:'Route 66\'s long desert sightlines are Widowmaker heaven. Sigma holds high ground at gas station and cave. Cassidy duels flankers. Ana plays far back with Mercy pocketing Widow.' },
+        alt:  { tank:'Winston', dps:['Tracer','Genji'], sup:['Kiriko','Ana'], why:'Dive works on Route 66\'s high ground fights. Winston leaps to snipers, Tracer and Genji collapse on isolated targets. Kiriko teleports to follow dives, Ana nanos the engage.' }
+      },
+      'Shambali Monastery': {
+        best: { tank:'Winston', dps:['Echo','Pharah'], sup:['Mercy','Ana'], why:'Vertical map with open skies. Echo and Pharah control airspace, Mercy damage boosts them. Winston dives the backline from ledges. Ana sleeps flankers and nanos Winston dives.' },
+        alt:  { tank:'D.Va', dps:['Ashe','Sojourn'], sup:['Baptiste','Kiriko'], why:'D.Va matrix protects against the air comp mirror. Ashe dynamite + Sojourn railgun confirms kills. Baptiste Immortality covers pushes through the monastery choke.' }
+      },
+      'Watchpoint: Gibraltar': {
+        best: { tank:'Winston', dps:['Tracer','Echo'], sup:['Kiriko','Ana'], why:'Multi-level map rewards dive. Winston leaps between platforms, Tracer blinks through the hangar. Echo flies around server room angles. Kiriko teleports to follow aggression, Ana nanos dives.' },
+        alt:  { tank:'Sigma', dps:['Widowmaker','Ashe'], sup:['Mercy','Baptiste'], why:'Sigma plays the long sightlines of the outdoor sections. Widow and Ashe cross-fire from different levels. Mercy pockets Widow. Baptiste holds the team through spam.' }
+      },
+
+      // === HYBRID ===
+      'Blizzard World': {
+        best: { tank:'Sigma', dps:['Hanzo','Cassidy'], sup:['Ana','Baptiste'], why:'Long first-point sightlines into tight theme park corridors. Sigma controls choke with barrier. Hanzo scouts and bursts, Cassidy handles flankers. Ana + Baptiste sustain through poke phases.' },
+        alt:  { tank:'Reinhardt', dps:['Reaper','Mei'], sup:['Lúcio','Moira'], why:'After first point, tight indoor paths reward brawl. Reinhardt charges through castle corridors. Reaper and Mei dominate close quarters. Lúcio speeds engages.' }
+      },
+      'Eichenwalde': {
+        best: { tank:'Reinhardt', dps:['Reaper','Mei'], sup:['Lúcio','Ana'], why:'The castle choke is brawl paradise. Reinhardt pins through the bridge. Mei walls supports off from their tank. Reaper melts barriers. Lúcio speeds through choke and Ana nanos Rein.' },
+        alt:  { tank:'Sigma', dps:['Hanzo','Junkrat'], sup:['Baptiste','Kiriko'], why:'Sigma pokes through choke with rock. Junkrat spams the tight bridge, Hanzo bursts openings. Baptiste Immortality holds on payload. Kiriko cleanses anti-nade.' }
+      },
+      'Hollywood': {
+        best: { tank:'Sigma', dps:['Ashe','Cassidy'], sup:['Ana','Mercy'], why:'First point has strong high-ground angles. Sigma holds café corner. Ashe controls main with dynamite. Cassidy duels flankers on point. Ana long-range heals, Mercy boosts Ashe.' },
+        alt:  { tank:'Winston', dps:['Tracer','Genji'], sup:['Kiriko','Ana'], why:'Hollywood streets have many flank paths. Winston + Tracer + Genji collapse on isolated targets. Kiriko follows dives, Ana provides ranged support and nano.' }
+      },
+      "King's Row": {
+        best: { tank:'Reinhardt', dps:['Reaper','Mei'], sup:['Lúcio','Ana'], why:'The classic brawl map. Tight streets, no long sightlines. Reinhardt swings freely. Reaper farms tanks. Mei walls off supports. Lúcio speeds through choke, Ana nanos for team fights.' },
+        alt:  { tank:'Zarya', dps:['Symmetra','Cassidy'], sup:['Moira','Brigitte'], why:'Zarya farms charge off the tight choke spam. Symmetra turrets lock down side rooms. Cassidy covers flanks. Moira + Brigitte provide unkillable sustain in close-range brawls.' }
+      },
+      'Midtown': {
+        best: { tank:'Winston', dps:['Tracer','Ashe'], sup:['Kiriko','Ana'], why:'Mixed sightlines — open streets into tight train station. Winston dives between levels. Tracer flanks through alleys. Ashe covers long angles. Kiriko teleports to follow. Ana nanos.' },
+        alt:  { tank:'Ramattra', dps:['Mei','Cassidy'], sup:['Baptiste','Lúcio'], why:'Ramattra punishes grouped enemies in tight train corridors. Mei walls cut off rotations. Cassidy controls flanks. Baptiste Immortality on payload. Lúcio speeds through Grand Central.' }
+      },
+      'Numbani': {
+        best: { tank:'Winston', dps:['Echo','Tracer'], sup:['Kiriko','Ana'], why:'Numbani is vertical with tons of high ground. Winston leaps to control rooftops. Echo flies above. Tracer harasses from below. Kiriko follows dives. Ana plays far back on long sightlines.' },
+        alt:  { tank:'Sigma', dps:['Hanzo','Sojourn'], sup:['Mercy','Baptiste'], why:'Sigma pokes from Numbani\'s high ground angles. Hanzo scouts with Sonic Arrow. Sojourn slides between cover. Mercy boosts DPS on sightlines, Baptiste sustains through poke.' }
+      },
+      'Paraiso': {
+        best: { tank:'Winston', dps:['Tracer','Genji'], sup:['Lúcio','Kiriko'], why:'Paraiso\'s tight alleys and vertical walls are dive heaven. Winston leaps between rooftops. Tracer and Genji flank through side paths. Lúcio wallrides the corridors, Kiriko cleanses and teleports.' },
+        alt:  { tank:'Reinhardt', dps:['Reaper','Cassidy'], sup:['Ana','Lúcio'], why:'Brawl alternative for tight indoor sections. Reinhardt charges through narrow streets. Reaper shreds close-range. Cassidy punishes flankers. Ana nades grouped fights, Lúcio speeds engage.' }
+      },
+
+      // === CONTROL ===
+      'Antarctic Peninsula': {
+        best: { tank:'Sigma', dps:['Ashe','Cassidy'], sup:['Ana','Baptiste'], why:'Mixed indoor/outdoor with strong sightlines. Sigma holds corners. Ashe dynamite denies point. Cassidy peels for supports. Ana and Baptiste layer healing and burst.' },
+        alt:  { tank:'Zarya', dps:['Reaper','Mei'], sup:['Lúcio','Moira'], why:'Point is often indoors. Zarya charges off spam in tight spaces. Reaper farms tanks. Mei walls supports. Lúcio speeds onto point, Moira sustains brawl.' }
+      },
+      'Busan': {
+        best: { tank:'D.Va', dps:['Tracer','Echo'], sup:['Lúcio','Kiriko'], why:'Busan rewards fast, mobile play across all three maps. D.Va boops enemies off MEKA Base. Tracer + Echo harass from angles. Lúcio wallrides through every map. Kiriko cleanses and follows.' },
+        alt:  { tank:'Winston', dps:['Pharah','Genji'], sup:['Mercy','Ana'], why:'Dive comp variant. Winston + Genji collapse on isolated targets. Pharah controls Downtown from above. Mercy pockets Pharah, Ana nanos dives.' }
+      },
+      'Ilios': {
+        best: { tank:'Winston', dps:['Pharah','Reaper'], sup:['Lúcio','Mercy'], why:'Well and Lighthouse have environmental kills. Winston and Pharah boop enemies into the pit. Reaper dominates the close-range Well fights. Lúcio boops and wallrides. Mercy pockets Pharah on Ruins.' },
+        alt:  { tank:'Sigma', dps:['Ashe','Cassidy'], sup:['Ana','Baptiste'], why:'Sigma plays Ruins sightlines well. Ashe controls long angles on Lighthouse. Cassidy duels flankers. Ana nades grouped fights on Well, Baptiste provides Immortality.' }
+      },
+      'Lijiang Tower': {
+        best: { tank:'Winston', dps:['Tracer','Echo'], sup:['Lúcio','Kiriko'], why:'Classic dive map. Winston leaps through Garden bridges and Night Market alleys. Tracer blinks around pillars. Echo flies above. Lúcio speeds onto point, Kiriko follows aggression.' },
+        alt:  { tank:'Reinhardt', dps:['Reaper','Mei'], sup:['Lúcio','Ana'], why:'Brawl works on Control Center and Night Market. Reinhardt swings through tight spaces. Reaper farms tanks. Mei walls off rotations. Lúcio speeds, Ana nanos.' }
+      },
+      'Nepal': {
+        best: { tank:'Winston', dps:['Echo','Pharah'], sup:['Mercy','Lúcio'], why:'Open skies on Sanctum and Shrine. Echo and Pharah own the airspace. Winston dives backlines from high ground. Mercy damage boosts flyers. Lúcio boops on Village.' },
+        alt:  { tank:'Sigma', dps:['Ashe','Cassidy'], sup:['Ana','Baptiste'], why:'Sigma controls Shrine and Village sightlines. Ashe dynamite denies point. Cassidy peels. Ana and Baptiste sustain through poke from range.' }
+      },
+      'Oasis': {
+        best: { tank:'D.Va', dps:['Tracer','Genji'], sup:['Lúcio','Kiriko'], why:'Fast-paced map with lots of flank paths. D.Va matrix protects dives. Tracer and Genji flank through University corridors and Gardens alleys. Lúcio speeds, Kiriko cleanses.' },
+        alt:  { tank:'Sigma', dps:['Pharah','Ashe'], sup:['Mercy','Ana'], why:'City Center has open air for Pharah. Sigma controls Gardens choke. Ashe covers long angles. Mercy pockets Pharah, Ana nades grouped point fights.' }
+      },
+      'Samoa': {
+        best: { tank:'Ramattra', dps:['Mei','Reaper'], sup:['Lúcio','Moira'], why:'Tight point with close-range fights. Ramattra punishes in Nemesis form. Mei walls isolate targets. Reaper farms tanks. Lúcio speeds brawl in, Moira sustains.' },
+        alt:  { tank:'Winston', dps:['Tracer','Echo'], sup:['Kiriko','Ana'], why:'Dive variant for open sections. Winston leaps between platforms. Tracer flanks the backline. Echo flies above. Kiriko follows, Ana provides ranged support.' }
+      },
+
+      // === PUSH ===
+      'Colosseo': {
+        best: { tank:'Winston', dps:['Tracer','Genji'], sup:['Lúcio','Kiriko'], why:'Push maps are long and favor mobility. Winston jumps between ruins. Tracer and Genji contest the robot from flank angles. Lúcio speeds rotations, Kiriko teleports to regroup.' },
+        alt:  { tank:'Sigma', dps:['Sojourn','Ashe'], sup:['Ana','Baptiste'], why:'Sigma plays Colosseo\'s long corridors with poke. Sojourn slides between Roman pillars. Ashe controls sightlines. Ana + Baptiste sustain through poke duels.' }
+      },
+      'Esperança': {
+        best: { tank:'Winston', dps:['Tracer','Echo'], sup:['Kiriko','Lúcio'], why:'Narrow Portuguese streets with vertical walls. Winston dives between rooftops. Tracer blinks through alleys. Echo flies above tight corridors. Kiriko cleanses, Lúcio speeds rotations.' },
+        alt:  { tank:'Reinhardt', dps:['Reaper','Cassidy'], sup:['Ana','Lúcio'], why:'Tight streets also work for brawl. Reinhardt charges through narrow paths. Reaper dominates close range. Cassidy controls flanks. Ana nades grouped fights, Lúcio speeds.' }
+      },
+      'New Queen Street': {
+        best: { tank:'D.Va', dps:['Sojourn','Tracer'], sup:['Lúcio','Kiriko'], why:'Fast rotations needed on this long Push map. D.Va boosts to contest robot. Sojourn and Tracer pressure from different angles. Lúcio speeds the team, Kiriko provides cleanse and burst healing.' },
+        alt:  { tank:'Sigma', dps:['Hanzo','Cassidy'], sup:['Ana','Baptiste'], why:'Sigma pokes through New Queen Street\'s open lanes. Hanzo scouts with Sonic Arrow. Cassidy peels. Ana and Baptiste sustain through drawn-out Push fights.' }
+      },
+      'Runasapi': {
+        best: { tank:'Winston', dps:['Tracer','Genji'], sup:['Lúcio','Kiriko'], why:'Runasapi\'s ruins and platforms reward dive. Winston leaps between stone walls. Tracer and Genji pressure from multiple angles. Lúcio speeds rotations, Kiriko follows dives.' },
+        alt:  { tank:'Ramattra', dps:['Mei','Cassidy'], sup:['Baptiste','Ana'], why:'Ramattra brawls through Runasapi\'s corridors. Mei walls isolate targets in tight spaces. Cassidy controls flanks. Baptiste provides Immortality, Ana nades grouped fights.' }
+      },
+
+      // === FLASHPOINT ===
+      'New Junk City': {
+        best: { tank:'Winston', dps:['Tracer','Venture'], sup:['Lúcio','Kiriko'], why:'Fast point captures need mobile heroes. Winston contests multiple points. Tracer and Venture dive onto the objective. Lúcio speeds between capture zones, Kiriko cleanses and heals.' },
+        alt:  { tank:'D.Va', dps:['Ashe','Sojourn'], sup:['Ana','Baptiste'], why:'D.Va flies between Flashpoints. Ashe and Sojourn control mid-range angles. Ana provides long-range healing and anti-nade. Baptiste Immortality holds contested points.' }
+      },
+      'Suravasa': {
+        best: { tank:'Winston', dps:['Tracer','Echo'], sup:['Lúcio','Kiriko'], why:'Suravasa needs fast rotations. Winston leaps between temples. Tracer harasses on point. Echo flies above. Lúcio speeds the team to each Flashpoint, Kiriko teleports to follow.' },
+        alt:  { tank:'Sigma', dps:['Hanzo','Sojourn'], sup:['Ana','Mercy'], why:'Sigma controls Suravasa\'s temple sightlines. Hanzo scouts. Sojourn slides between cover. Ana heals from range, Mercy damage boosts DPS on long angles.' }
+      }
+    };
+
+    // ══════════════════════════════════════════
+    // OPEN QUEUE STRATS (6 heroes, no role lock)
+    // ══════════════════════════════════════════
+    const OQ_STRATS = {
+      'Circuit Royal': {
+        best: { heroes:['Sigma','D.Va','Widowmaker','Ashe','Ana','Mercy'], why:'Double tank shields protect long sightlines. Widow and Ashe dominate from high ground with Mercy pocket. D.Va matrix denies enemy sniper duels. Ana anti-nades from safety.' },
+        alt:  { heroes:['Reinhardt','Zarya','Reaper','Mei','Ana','Lúcio'], why:'Triple front-line pressure. Zarya bubbles Rein charges. Reaper and Mei close the gap. Lúcio speeds through open sections, Ana nanos Rein for devastating pushes.' }
+      },
+      'Dorado': {
+        best: { heroes:['Reinhardt','Zarya','Reaper','Mei','Ana','Lúcio'], why:'Classic brawl with double tank. Zarya farms charge in tight streets. Rein swings freely. Reaper + Mei dominate close range. Lúcio speeds through chokes, Ana nanos Rein.' },
+        alt:  { heroes:['Reinhardt','D.Va','Cassidy','Mei','Ana','Moira'], why:'D.Va peels for Ana while Rein brawls. Cassidy handles flankers. Mei walls isolate targets. Moira provides raw healing for extended brawls.' }
+      },
+      'Havana': {
+        best: { heroes:['Sigma','Orisa','Widowmaker','Ashe','Ana','Mercy'], why:'Double shield with double sniper. Orisa Fortify holds payload, Sigma pokes. Widow + Ashe own the long streets. Mercy pockets Widow, Ana heals from range.' },
+        alt:  { heroes:['Winston','D.Va','Tracer','Genji','Kiriko','Ana'], why:'Full dive with double mobile tank. Winston and D.Va jump backlines together. Tracer + Genji clean up. Kiriko follows, Ana nanos the dive.' }
+      },
+      'Junkertown': {
+        best: { heroes:['Ramattra','Sigma','Bastion','Torbjörn','Baptiste','Ana'], why:'Bunker comp with double tank. Bastion shreds behind Ramattra barrier. Torbjörn turret covers flanks. Sigma adds poke. Baptiste Immortality + Ana sustain everything.' },
+        alt:  { heroes:['Reinhardt','Zarya','Reaper','Mei','Lúcio','Moira'], why:'Aggressive brawl to rush the open streets. Zarya bubbles Rein charges. Reaper melts tanks. Mei walls off supports. Lúcio speeds in, Moira sustains.' }
+      },
+      'Rialto': {
+        best: { heroes:['Sigma','D.Va','Hanzo','Ashe','Ana','Baptiste'], why:'Double tank poke on canal sightlines. Sigma rocks from corners, D.Va matrix denies burst. Hanzo + Ashe cross-fire. Ana + Baptiste layered healing.' },
+        alt:  { heroes:['Reinhardt','Zarya','Reaper','Mei','Lúcio','Ana'], why:'Brawl for tight bridge sections. Zarya bubbles Rein through choke. Reaper farms tanks. Mei walls retreats. Lúcio speeds, Ana nanos.' }
+      },
+      'Route 66': {
+        best: { heroes:['Sigma','D.Va','Widowmaker','Cassidy','Ana','Mercy'], why:'D.Va + Sigma control high ground at gas station. Widow dominates sightlines with Mercy pocket. Cassidy peels for supports. Ana anti-nades from range.' },
+        alt:  { heroes:['Winston','D.Va','Tracer','Genji','Kiriko','Ana'], why:'Double dive to collapse on isolated snipers. Winston + D.Va jump together. Tracer and Genji finish kills. Kiriko teleports to follow, Ana nanos.' }
+      },
+      'Shambali Monastery': {
+        best: { heroes:['Winston','D.Va','Echo','Pharah','Mercy','Ana'], why:'Full air control. Winston + D.Va dive from ledges while Echo + Pharah own the sky. Mercy damage boosts flyers. Ana nanos dive engages.' },
+        alt:  { heroes:['Sigma','Orisa','Ashe','Sojourn','Baptiste','Kiriko'], why:'Double shield holds the monastery choke. Ashe + Sojourn burst from mid-range. Baptiste Immortality saves pushes. Kiriko cleanses.' }
+      },
+      'Watchpoint: Gibraltar': {
+        best: { heroes:['Winston','D.Va','Tracer','Echo','Kiriko','Ana'], why:'Double dive on multi-level map. Winston + D.Va jump between platforms. Tracer blinks through hangar. Echo flies server room angles. Kiriko follows, Ana nanos.' },
+        alt:  { heroes:['Sigma','Orisa','Widowmaker','Ashe','Mercy','Baptiste'], why:'Double shield with sniper duo. Sigma + Orisa control outdoor sightlines. Widow + Ashe cross-fire. Mercy pockets Widow. Baptiste holds with Immortality.' }
+      },
+      'Blizzard World': {
+        best: { heroes:['Sigma','D.Va','Hanzo','Cassidy','Ana','Baptiste'], why:'Double tank poke through first choke. Sigma barrier + D.Va matrix deny spam. Hanzo bursts openings, Cassidy handles flankers. Ana + Baptiste sustain.' },
+        alt:  { heroes:['Reinhardt','Zarya','Reaper','Mei','Lúcio','Moira'], why:'After first point, brawl dominates. Zarya bubbles Rein through castle corridors. Reaper + Mei own close quarters. Lúcio speeds, Moira sustains.' }
+      },
+      'Eichenwalde': {
+        best: { heroes:['Reinhardt','Zarya','Reaper','Mei','Lúcio','Ana'], why:'The ultimate brawl map. Double front-line crushes the castle choke. Zarya bubbles Rein pins. Reaper melts everything. Mei walls retreats. Lúcio speeds, Ana nanos Rein.' },
+        alt:  { heroes:['Reinhardt','D.Va','Junkrat','Cassidy','Baptiste','Ana'], why:'D.Va peels while Rein pushes. Junkrat spams the tight bridge. Cassidy controls flanks. Baptiste Immortality holds payload. Ana nades grouped fights.' }
+      },
+      'Hollywood': {
+        best: { heroes:['Sigma','D.Va','Ashe','Cassidy','Ana','Mercy'], why:'Double tank controls first-point high ground. Sigma holds café, D.Va matrix denies burst. Ashe + Cassidy cross-fire with Mercy pocket. Ana anti-nades.' },
+        alt:  { heroes:['Winston','D.Va','Tracer','Genji','Kiriko','Ana'], why:'Full dive for Hollywood streets. Winston + D.Va jump backlines. Tracer + Genji collapse on targets. Kiriko follows, Ana nanos.' }
+      },
+      "King's Row": {
+        best: { heroes:['Reinhardt','Zarya','Reaper','Mei','Lúcio','Ana'], why:'The best brawl map in the game. Double front-line in tight streets. Zarya farms max charge. Rein swings freely. Reaper melts tanks. Mei walls supports. Lúcio speeds, Ana nanos.' },
+        alt:  { heroes:['Reinhardt','D.Va','Symmetra','Cassidy','Moira','Brigitte'], why:'D.Va peels for backline. Symmetra turrets lock side rooms. Cassidy handles flankers. Moira + Brigitte unkillable close-range sustain.' }
+      },
+      'Midtown': {
+        best: { heroes:['Winston','D.Va','Tracer','Ashe','Kiriko','Ana'], why:'Mixed map needs flexibility. Winston + D.Va dive between levels. Tracer flanks through alleys. Ashe covers long angles. Kiriko follows, Ana nanos.' },
+        alt:  { heroes:['Ramattra','Reinhardt','Mei','Cassidy','Lúcio','Baptiste'], why:'Double brawl tank in Grand Central. Ramattra + Rein crush grouped enemies. Mei walls cut rotations. Cassidy controls flanks. Lúcio speeds, Baptiste holds.' }
+      },
+      'Numbani': {
+        best: { heroes:['Winston','D.Va','Echo','Tracer','Kiriko','Ana'], why:'Vertical map = double dive. Winston + D.Va control rooftops. Echo flies above. Tracer harasses below. Kiriko teleports to follow. Ana nanos.' },
+        alt:  { heroes:['Sigma','Orisa','Hanzo','Sojourn','Mercy','Baptiste'], why:'Double shield pokes from high ground. Hanzo scouts. Sojourn slides between cover. Mercy boosts DPS. Baptiste sustains.' }
+      },
+      'Paraiso': {
+        best: { heroes:['Winston','D.Va','Tracer','Genji','Lúcio','Kiriko'], why:'Full dive for tight alleys. Winston + D.Va leap between rooftops. Tracer + Genji flank side paths. Lúcio wallrides corridors, Kiriko cleanses.' },
+        alt:  { heroes:['Reinhardt','Zarya','Reaper','Cassidy','Ana','Lúcio'], why:'Brawl for indoor sections. Zarya bubbles Rein through narrow streets. Reaper shreds close-range. Cassidy punishes flankers. Ana nades, Lúcio speeds.' }
+      },
+      'Antarctic Peninsula': {
+        best: { heroes:['Sigma','Zarya','Ashe','Cassidy','Ana','Baptiste'], why:'Double tank holds indoor points. Zarya charges off spam, Sigma controls corners. Ashe dynamite denies point. Cassidy peels. Ana + Baptiste layer healing.' },
+        alt:  { heroes:['Reinhardt','Zarya','Reaper','Mei','Lúcio','Moira'], why:'Brawl for indoor sub-maps. Zarya bubbles Rein. Reaper farms tanks. Mei walls supports. Lúcio speeds onto point, Moira sustains.' }
+      },
+      'Busan': {
+        best: { heroes:['D.Va','Winston','Tracer','Echo','Lúcio','Kiriko'], why:'Double dive for fast-paced maps. D.Va boops off MEKA Base, Winston leaps. Tracer + Echo harass. Lúcio wallrides everywhere, Kiriko cleanses.' },
+        alt:  { heroes:['D.Va','Sigma','Pharah','Genji','Mercy','Ana'], why:'D.Va + Sigma for mixed control. Pharah dominates Downtown with Mercy pocket. Genji flanks. Ana nanos dives.' }
+      },
+      'Ilios': {
+        best: { heroes:['Winston','D.Va','Pharah','Reaper','Lúcio','Mercy'], why:'Environmental kill heaven. Winston + D.Va boop on Well. Pharah rockets + Lúcio boops = free kills. Reaper dominates close-range. Mercy pockets Pharah on Ruins.' },
+        alt:  { heroes:['Sigma','Zarya','Ashe','Cassidy','Ana','Baptiste'], why:'Double tank poke for Ruins and Lighthouse. Sigma controls sightlines. Zarya bubbles. Ashe + Cassidy cross-fire. Ana nades, Baptiste Immortality.' }
+      },
+      'Lijiang Tower': {
+        best: { heroes:['Winston','D.Va','Tracer','Echo','Lúcio','Kiriko'], why:'Double dive for the classic dive map. Winston + D.Va leap through Garden bridges. Tracer blinks Night Market. Echo flies above. Lúcio speeds, Kiriko follows.' },
+        alt:  { heroes:['Reinhardt','Zarya','Reaper','Mei','Lúcio','Ana'], why:'Brawl for Control Center and Night Market. Zarya bubbles Rein. Reaper farms tanks. Mei walls rotations. Lúcio speeds, Ana nanos.' }
+      },
+      'Nepal': {
+        best: { heroes:['Winston','D.Va','Echo','Pharah','Mercy','Lúcio'], why:'Air control with double dive tank. Winston + D.Va from high ground. Echo + Pharah own open skies. Mercy damage boosts flyers. Lúcio boops on Village.' },
+        alt:  { heroes:['Sigma','Zarya','Ashe','Cassidy','Ana','Baptiste'], why:'Poke for Shrine and Village sightlines. Sigma + Zarya hold corners. Ashe dynamite denies. Cassidy peels. Ana + Baptiste sustain.' }
+      },
+      'Oasis': {
+        best: { heroes:['D.Va','Winston','Tracer','Genji','Lúcio','Kiriko'], why:'Full dive for flank paths. D.Va + Winston jump together. Tracer + Genji flank University corridors and Gardens alleys. Lúcio speeds, Kiriko cleanses.' },
+        alt:  { heroes:['Sigma','D.Va','Pharah','Ashe','Mercy','Ana'], why:'D.Va + Sigma for City Center. Pharah controls air with Mercy pocket. Ashe covers long angles. Ana nades point fights.' }
+      },
+      'Samoa': {
+        best: { heroes:['Ramattra','Zarya','Mei','Reaper','Lúcio','Moira'], why:'Triple brawl on tight point. Ramattra + Zarya crush in Nemesis form. Mei walls isolate. Reaper farms tanks. Lúcio speeds in, Moira sustains.' },
+        alt:  { heroes:['Winston','D.Va','Tracer','Echo','Kiriko','Ana'], why:'Dive for open sections. Winston + D.Va leap between platforms. Tracer flanks. Echo flies above. Kiriko follows, Ana nanos.' }
+      },
+      'Colosseo': {
+        best: { heroes:['Winston','D.Va','Tracer','Genji','Lúcio','Kiriko'], why:'Double dive for long Push map. Winston + D.Va jump between ruins. Tracer + Genji contest robot from flanks. Lúcio speeds rotations, Kiriko regroups.' },
+        alt:  { heroes:['Sigma','Orisa','Sojourn','Ashe','Ana','Baptiste'], why:'Double shield poke through long corridors. Sojourn slides between pillars. Ashe controls sightlines. Ana + Baptiste sustain.' }
+      },
+      'Esperança': {
+        best: { heroes:['Winston','D.Va','Tracer','Echo','Kiriko','Lúcio'], why:'Double dive in narrow streets. Winston + D.Va leap between rooftops. Tracer blinks through alleys. Echo flies above. Kiriko cleanses, Lúcio speeds.' },
+        alt:  { heroes:['Reinhardt','Zarya','Reaper','Cassidy','Ana','Lúcio'], why:'Brawl for tight streets. Zarya bubbles Rein charges. Reaper dominates close range. Cassidy controls flanks. Ana nades, Lúcio speeds.' }
+      },
+      'New Queen Street': {
+        best: { heroes:['D.Va','Winston','Sojourn','Tracer','Lúcio','Kiriko'], why:'Double dive for fast Push rotations. D.Va + Winston boost to contest. Sojourn + Tracer pressure from angles. Lúcio speeds, Kiriko cleanses.' },
+        alt:  { heroes:['Sigma','Orisa','Hanzo','Cassidy','Ana','Baptiste'], why:'Double shield through open lanes. Hanzo scouts. Cassidy peels. Ana + Baptiste sustain drawn-out Push fights.' }
+      },
+      'Runasapi': {
+        best: { heroes:['Winston','D.Va','Tracer','Genji','Lúcio','Kiriko'], why:'Double dive on ruins and platforms. Winston + D.Va leap between stone walls. Tracer + Genji pressure from angles. Lúcio speeds, Kiriko follows.' },
+        alt:  { heroes:['Ramattra','Reinhardt','Mei','Cassidy','Baptiste','Ana'], why:'Double brawl tank through corridors. Ramattra + Rein crush tight spaces. Mei walls isolate. Cassidy controls flanks. Baptiste Immortality + Ana nades.' }
+      },
+      'New Junk City': {
+        best: { heroes:['Winston','D.Va','Tracer','Venture','Lúcio','Kiriko'], why:'Double dive for fast Flashpoint captures. Winston + D.Va contest multiple points. Tracer + Venture dive objectives. Lúcio speeds between zones, Kiriko heals.' },
+        alt:  { heroes:['D.Va','Sigma','Ashe','Sojourn','Ana','Baptiste'], why:'D.Va + Sigma for mixed play. Ashe + Sojourn control mid-range. Ana anti-nades. Baptiste Immortality holds contested points.' }
+      },
+      'Suravasa': {
+        best: { heroes:['Winston','D.Va','Tracer','Echo','Lúcio','Kiriko'], why:'Double dive for fast temple rotations. Winston + D.Va leap between temples. Tracer harasses. Echo flies above. Lúcio speeds to each Flashpoint, Kiriko follows.' },
+        alt:  { heroes:['Sigma','Orisa','Hanzo','Sojourn','Ana','Mercy'], why:'Double shield on temple sightlines. Hanzo scouts. Sojourn slides between cover. Ana heals from range. Mercy damage boosts DPS.' }
+      }
+    };
+
+    const grid = document.getElementById('map-grid');
+    const modeLabel = document.getElementById('mode-label');
+    const deckSection = document.getElementById('deck-section');
+    const deckMapName = document.getElementById('deck-map-name');
+    const deckMode = document.getElementById('deck-mode');
+    const deckMapImg = document.getElementById('deck-map-img');
+    const deckContainer = document.getElementById('deck-container');
+    const queueToggle = document.getElementById('queue-toggle');
+
+    let selectedMap = null;
+    let queueMode = 'flex';
+
+    queueToggle.addEventListener('click', e => {
+      const btn = e.target.closest('.queue-toggle-btn');
+      if (!btn) return;
+      queueToggle.querySelectorAll('.queue-toggle-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      queueMode = btn.dataset.queue;
+      if (selectedMap) showDecks(selectedMap);
+    });
+
+    function getMode(mapName) {
+      for (const [mode, maps] of Object.entries(MAPS)) {
+        if (maps.includes(mapName)) return mode;
+      }
+      return '—';
+    }
+
+    function renderMapGrid() {
+      grid.innerHTML = '';
+      Object.entries(MAPS).forEach(([mode, maps]) => {
+        const title = document.createElement('div');
+        title.className = 'mode-group-title';
+        title.textContent = mode;
+        grid.appendChild(title);
+
+        const row = document.createElement('div');
+        row.className = 'map-pick-grid';
+        maps.forEach(map => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'map-pick-btn' + (selectedMap === map ? ' selected' : '');
+          const img = MAP_IMAGES[map];
+          if (img) {
+            btn.innerHTML = `<img src="${img}" alt="${map}"><div class="map-pick-name">${map}</div>`;
+          } else {
+            btn.innerHTML = `<div class="no-img">No img</div><div class="map-pick-name">${map}</div>`;
+          }
+          btn.addEventListener('click', () => selectMap(map));
+          row.appendChild(btn);
+        });
+        grid.appendChild(row);
+      });
+    }
+
+    function selectMap(map) {
+      selectedMap = map;
+      renderMapGrid();
+      showDecks(map);
+    }
+
+    function showDecks(map) {
+      const strats = queueMode === 'flex' ? FLEX_STRATS : OQ_STRATS;
+      const strat = strats[map];
+      const mode = getMode(map);
+      if (!strat) {
+        deckSection.style.display = 'none';
+        return;
+      }
+
+      deckSection.style.display = '';
+      deckMapName.textContent = map;
+      deckMode.textContent = mode + (queueMode === 'open' ? ' — Open Queue' : ' — Flex Queue');
+
+      const img = MAP_IMAGES[map];
+      if (img) {
+        deckMapImg.innerHTML = `<img src="${img}" alt="${map}" style="width:100%;max-height:180px;object-fit:cover;border-radius:10px;border:1px solid var(--border)">`;
+      } else {
+        deckMapImg.innerHTML = '';
+      }
+
+      if (queueMode === 'flex') {
+        deckContainer.innerHTML = renderFlexDeck(strat.best, 'Best Comp', true) + renderFlexDeck(strat.alt, 'Alternative Comp', false);
+      } else {
+        deckContainer.innerHTML = renderOQDeck(strat.best, 'Best Comp', true) + renderOQDeck(strat.alt, 'Alternative Comp', false);
+      }
+
+      deckContainer.querySelectorAll('img').forEach(img => {
+        img.addEventListener('error', () => {
+          const name = img.alt;
+          const hero = HERO_BY_NAME[name];
+          img.src = makeFallbackIcon(name, hero ? hero.role : 'Damage');
+        }, { once: true });
+      });
+
+      deckSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function renderFlexDeck(comp, label, isBest) {
+      const heroes = [
+        { name: comp.tank, role: 'Tank' },
+        { name: comp.dps[0], role: 'Damage' },
+        { name: comp.dps[1], role: 'Damage' },
+        { name: comp.sup[0], role: 'Support' },
+        { name: comp.sup[1], role: 'Support' }
+      ];
+      return renderDeckCard(heroes, comp.why, label, isBest);
+    }
+
+    function renderOQDeck(comp, label, isBest) {
+      const heroes = comp.heroes.map(name => {
+        const h = HERO_BY_NAME[name];
+        return { name, role: h ? h.role : 'Damage' };
+      });
+      return renderDeckCard(heroes, comp.why, label, isBest);
+    }
+
+    function renderDeckCard(heroes, why, label, isBest) {
+      const roleColors = { Tank: 'var(--tank)', Damage: 'var(--dps)', Support: 'var(--green)' };
+
+      let html = `<div class="deck-card ${isBest ? 'recommended' : ''}">`;
+      html += `<div class="deck-label ${isBest ? 'best' : 'alt'}">${isBest ? '★ ' : ''}${label}</div>`;
+      html += '<div class="deck-roster">';
+      heroes.forEach(h => {
+        const hero = HERO_BY_NAME[h.name];
+        const imgSrc = hero ? hero.image : '';
+        const color = roleColors[h.role] || 'var(--gold)';
+        html += `<div class="deck-hero">
+          <img src="${imgSrc}" alt="${h.name}">
+          <div class="hero-n">${h.name}</div>
+          <div class="hero-r" style="color:${color}">${h.role}</div>
+        </div>`;
+      });
+      html += '</div>';
+      html += `<div class="deck-why">${why}</div>`;
+      html += '</div>';
+      return html;
+    }
+
+    function makeFallbackIcon(name, role) {
+      const colorMap = { Tank: '5080b0', Damage: 'c44040', Support: '5a9a50' };
+      const bg = colorMap[role] || 'c8a23c';
+      const initials = (name || 'H').replace(/[^A-Za-zÀ-ÿ0-9]/g, ' ').split(/\s+/).filter(Boolean).slice(0, 2).map(p => p[0]).join('').toUpperCase();
+      const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='128' height='128'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='#${bg}'/><stop offset='100%' stop-color='#111322'/></linearGradient></defs><rect rx='22' width='128' height='128' fill='url(#g)'/><text x='50%' y='52%' dominant-baseline='middle' text-anchor='middle' font-size='52' font-family='Arial' fill='white'>${initials}</text></svg>`;
+      return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+    }
+
+    renderMapGrid();
+  })();
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CounterPick – Hero Patch & Meta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=7">
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="logo">
+        <div class="logo-icon">CP</div>
+        <div>
+          <h1>CounterPick</h1>
+          <p class="eyebrow">OVERWATCH 2 COUNTER TOOL</p>
+        </div>
+      </div>
+    </div>
+    <nav class="topbar-nav">
+      <a class="nav-link" href="index.html">Draft</a>
+      <a class="nav-link active" href="hero-insights.html">Patch &amp; Meta</a>
+      <a class="nav-link" href="open-queue.html">Open Queue</a>
+    </nav>
+    <div class="topbar-actions"></div>
+  </header>
+
+  <main style="padding:16px 20px;max-width:1200px;margin:0 auto">
+    <section class="card" style="margin-bottom:14px">
+      <div class="panel-head">
+        <h2>Select a Hero</h2>
+        <span class="panel-meta" id="role-filter-label">All roles</span>
+      </div>
+      <div class="role-bar" id="role-bar" style="margin-bottom:14px">
+        <button class="role-btn active" data-role="All" type="button"><span class="role-icon">◎</span><span>All</span></button>
+        <button class="role-btn" data-role="Tank" type="button"><span class="role-icon">🛡</span><span>Tank</span></button>
+        <button class="role-btn" data-role="Damage" type="button"><span class="role-icon">✦</span><span>Damage</span></button>
+        <button class="role-btn" data-role="Support" type="button"><span class="role-icon">✚</span><span>Support</span></button>
+      </div>
+      <div id="hero-grid" class="hero-select-grid"></div>
+    </section>
+
+    <section class="card" id="patch-section" style="display:none">
+      <div class="card-header">
+        <h2 id="patch-hero-name">—</h2>
+        <span class="badge badge-orange" id="patch-date">—</span>
+      </div>
+      <div id="patch-content"></div>
+    </section>
+  </main>
+
+  <script src="data.js"></script>
+  <script>
+  (function () {
+    const grid = document.getElementById('hero-grid');
+    const roleBar = document.getElementById('role-bar');
+    const roleLabel = document.getElementById('role-filter-label');
+    const patchSection = document.getElementById('patch-section');
+    const patchName = document.getElementById('patch-hero-name');
+    const patchDate = document.getElementById('patch-date');
+    const patchContent = document.getElementById('patch-content');
+
+    let activeRole = 'All';
+    let selectedHero = null;
+
+    function renderGrid() {
+      grid.innerHTML = '';
+      const roleOrder = { Tank: 0, Damage: 1, Support: 2 };
+      const heroes = HERO_DB
+        .filter(h => activeRole === 'All' || h.role === activeRole)
+        .sort((a, b) => (roleOrder[a.role] ?? 9) - (roleOrder[b.role] ?? 9) || a.name.localeCompare(b.name));
+
+      heroes.forEach(hero => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'hero-pick-btn' + (selectedHero === hero.name ? ' selected' : '');
+        btn.innerHTML = `<img src="${hero.image}" alt="${hero.name}"><span class="hero-pick-name">${hero.name}</span>`;
+        btn.addEventListener('click', () => selectHero(hero.name));
+        grid.appendChild(btn);
+      });
+    }
+
+    function selectHero(name) {
+      selectedHero = name;
+      renderGrid();
+      showPatch(name);
+    }
+
+    function showPatch(name) {
+      const patch = HERO_PATCHES[name];
+      const hero = HERO_DB.find(h => h.name === name);
+      if (!patch || !hero) {
+        patchSection.style.display = 'none';
+        return;
+      }
+
+      patchSection.style.display = '';
+      patchName.textContent = hero.name;
+
+      const d = new Date(patch.date + 'T00:00:00');
+      const formatted = d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      patchDate.textContent = formatted;
+
+      const roleColors = { Tank: 'var(--blue)', Damage: 'var(--pink)', Support: 'var(--green)' };
+      const roleColor = roleColors[hero.role] || 'var(--blue)';
+
+      let html = '';
+      html += `<div class="patch-info-row">`;
+      html += `<span class="mini-tag" style="color:${roleColor};border-color:${roleColor}">${hero.role}</span>`;
+      html += `<span class="mini-tag map-tag">${patch.patch}</span>`;
+      html += `</div>`;
+      html += `<div class="patch-changes">`;
+      patch.changes.forEach(c => {
+        html += `<div class="patch-change-item">${c}</div>`;
+      });
+      html += `</div>`;
+
+      patchContent.innerHTML = html;
+      patchSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    roleBar.addEventListener('click', e => {
+      const btn = e.target.closest('.role-btn');
+      if (!btn) return;
+      roleBar.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeRole = btn.dataset.role;
+      roleLabel.textContent = activeRole === 'All' ? 'All roles' : activeRole;
+      renderGrid();
+    });
+
+    renderGrid();
+  })();
+  </script>
+</body>
+</html>
