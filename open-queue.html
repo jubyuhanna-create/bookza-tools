@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CounterPick Open Queue — no role lock counter-pick tool for Overwatch 2. Pick any 6 enemy heroes and get the best counters, bans, and perks.">
+  <title>CounterPick – Open Queue</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=7">
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="logo">
+        <div class="logo-icon">CP</div>
+        <div>
+          <h1>CounterPick</h1>
+          <p class="eyebrow">OVERWATCH 2 COUNTER TOOL</p>
+        </div>
+      </div>
+    </div>
+    <nav class="topbar-nav">
+      <a class="nav-link" href="index.html">Flex Queue</a>
+      <a class="nav-link active" href="open-queue.html">Open Queue</a>
+      <a class="nav-link" href="hero-insights.html">Patch &amp; Meta</a>
+      <a class="nav-link" href="tip.html">Tip of the Day</a>
+      <a class="nav-link" href="strategy.html">Strategy</a>
+    </nav>
+    <div class="topbar-actions">
+      <button id="reset-btn" class="btn btn-danger" type="button">Reset</button>
+    </div>
+  </header>
+
+  <main style="padding:16px 20px;max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
+    <section class="card">
+      <div class="card-header">
+        <h2>Enemy Team</h2>
+        <span class="badge badge-orange" id="oq-count">0/6</span>
+      </div>
+      <p style="color:var(--text-secondary);font-size:13px;margin-bottom:12px">No role lock. Click a slot and pick any hero.</p>
+      <div class="slot-groups">
+        <div class="slot-group">
+          <div class="slot-row oq-row">
+            <button class="hero-slot oq-slot" data-slot="oq1" type="button"></button>
+            <button class="hero-slot oq-slot" data-slot="oq2" type="button"></button>
+            <button class="hero-slot oq-slot" data-slot="oq3" type="button"></button>
+            <button class="hero-slot oq-slot" data-slot="oq4" type="button"></button>
+            <button class="hero-slot oq-slot" data-slot="oq5" type="button"></button>
+            <button class="hero-slot oq-slot" data-slot="oq6" type="button"></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card card-accent">
+      <div class="card-header">
+        <h2>Best Counter Pick</h2>
+        <span class="badge badge-orange">Counter</span>
+      </div>
+      <div id="results-container">
+        <div class="empty-state">
+          <div class="empty-icon">?</div>
+          <h3>No draft yet</h3>
+          <p>Pick at least one enemy hero to see your best counter picks.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-header">
+        <h2>Ban Suggestions</h2>
+        <span class="badge badge-red">Threat</span>
+      </div>
+      <div id="ban-container">
+        <div class="empty-state compact">
+          <h3>No bans yet</h3>
+          <p>Add enemies to see the biggest threats to remove.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-header">
+        <h2>Best Perks</h2>
+        <span class="badge">1 minor + 1 major</span>
+      </div>
+      <div id="perk-container" class="perk-container">
+        <div class="empty-state compact">
+          <h3>No perk plan yet</h3>
+          <p>Your best counter pick will generate perk recommendations.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="slot-modal" class="modal hidden" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal="true"></div>
+    <div class="modal-panel glass">
+      <div class="panel-head modal-head">
+        <h2 id="modal-title">Pick a hero</h2>
+        <button class="icon-btn" id="close-modal-btn" type="button">✕</button>
+      </div>
+      <p class="panel-copy" id="modal-copy">Choose one hero.</p>
+      <div id="modal-hero-list" class="modal-hero-list"></div>
+    </div>
+  </div>
+
+  <div id="tooltip" class="tooltip hidden" role="tooltip" aria-hidden="true"></div>
+
+  <script src="data.js"></script>
+  <script>
+  (function () {
+    const HERO_BY_NAME = Object.fromEntries(HERO_DB.map(h => [h.name, h]));
+    const HEROES_BY_ROLE = {
+      Tank: HERO_DB.filter(h => h.role === 'Tank').sort((a, b) => a.name.localeCompare(b.name)),
+      Damage: HERO_DB.filter(h => h.role === 'Damage').sort((a, b) => a.name.localeCompare(b.name)),
+      Support: HERO_DB.filter(h => h.role === 'Support').sort((a, b) => a.name.localeCompare(b.name))
+    };
+
+    const slots = { oq1: null, oq2: null, oq3: null, oq4: null, oq5: null, oq6: null };
+    let activeSlot = null;
+    let topHeroes = [];
+    let selectedPerkHero = null;
+
+    const dom = {
+      count: document.getElementById('oq-count'),
+      results: document.getElementById('results-container'),
+      bans: document.getElementById('ban-container'),
+      perks: document.getElementById('perk-container'),
+      modal: document.getElementById('slot-modal'),
+      modalTitle: document.getElementById('modal-title'),
+      modalCopy: document.getElementById('modal-copy'),
+      modalList: document.getElementById('modal-hero-list'),
+      tooltip: document.getElementById('tooltip')
+    };
+
+    // --- Init ---
+    document.querySelectorAll('.oq-slot').forEach(btn => {
+      btn.addEventListener('click', () => openPicker(btn.dataset.slot));
+    });
+    document.getElementById('reset-btn').addEventListener('click', resetAll);
+    document.getElementById('close-modal-btn').addEventListener('click', closeModal);
+    dom.modal.addEventListener('click', e => { if (e.target.dataset.closeModal === 'true') closeModal(); });
+    window.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    renderSlots();
+
+    // --- State helpers ---
+    function getNames() { return Object.values(slots).filter(Boolean); }
+
+    function resetAll() {
+      Object.keys(slots).forEach(k => slots[k] = null);
+      updateAll();
+    }
+
+    function updateAll() {
+      renderSlots();
+      dom.count.textContent = `${getNames().length}/6`;
+      renderResults();
+      renderBans();
+      renderPerks();
+    }
+
+    // --- Slots ---
+    function renderSlots() {
+      document.querySelectorAll('.oq-slot').forEach(el => {
+        const heroName = slots[el.dataset.slot];
+        if (!heroName) {
+          el.innerHTML = `
+            <div class="hero-slot-inner">
+              <span class="slot-empty-badge">+</span>
+              <div class="hero-slot-name">Any Hero</div>
+              <div class="hero-slot-sub">No role lock</div>
+            </div>`;
+          return;
+        }
+        const hero = HERO_BY_NAME[heroName];
+        el.innerHTML = `
+          <div class="hero-slot-inner">
+            <span class="hero-emoji" role="img" aria-label="${hero.name}">${hero.emoji}</span>
+            <div class="hero-slot-name">${hero.name}</div>
+            <div class="hero-slot-sub">${hero.role}</div>
+          </div>`;
+      });
+    }
+
+    // --- Picker modal ---
+    function openPicker(slotKey) {
+      activeSlot = slotKey;
+      const taken = new Set(getNames().filter(n => n !== slots[slotKey]));
+      dom.modalTitle.textContent = 'Choose any hero';
+      dom.modalCopy.textContent = 'Open Queue — no role lock. The same hero cannot be picked twice.';
+      dom.modalList.innerHTML = '';
+
+      const clearBtn = document.createElement('button');
+      clearBtn.type = 'button';
+      clearBtn.className = 'text-option';
+      clearBtn.textContent = 'Clear this slot';
+      clearBtn.addEventListener('click', () => { slots[slotKey] = null; closeModal(); updateAll(); });
+      dom.modalList.appendChild(clearBtn);
+
+      ['Tank', 'Damage', 'Support'].forEach(role => {
+        const group = document.createElement('div');
+        group.className = 'modal-group';
+        group.innerHTML = `<div class="modal-group-title">${role}</div><div class="modal-grid"></div>`;
+        const grid = group.querySelector('.modal-grid');
+        HEROES_BY_ROLE[role].forEach(hero => {
+          const item = document.createElement('button');
+          item.type = 'button';
+          item.className = 'modal-hero';
+          if (taken.has(hero.name)) item.classList.add('disabled');
+          item.innerHTML = `<span class="hero-emoji" role="img" aria-label="${hero.name}">${hero.emoji}</span><div class="modal-hero-name">${hero.name}</div>`;
+          if (!taken.has(hero.name)) {
+            item.addEventListener('click', () => { slots[slotKey] = hero.name; closeModal(); updateAll(); });
+            bindTooltip(item, hero);
+          }
+          grid.appendChild(item);
+        });
+        dom.modalList.appendChild(group);
+      });
+      openModal();
+    }
+
+    function openModal() { dom.modal.classList.remove('hidden'); dom.modal.setAttribute('aria-hidden', 'false'); }
+    function closeModal() { dom.modal.classList.add('hidden'); dom.modal.setAttribute('aria-hidden', 'true'); }
+
+    // --- Results ---
+    function renderResults() {
+      const enemies = getNames();
+      if (!enemies.length) {
+        topHeroes = [];
+        selectedPerkHero = null;
+        dom.results.innerHTML = `<div class="empty-state"><div class="empty-icon">◎</div><h3>No draft yet</h3><p>Pick at least one enemy hero to see your best counter picks.</p></div>`;
+        return;
+      }
+
+      const scored = HERO_DB
+        .filter(h => !enemies.includes(h.name))
+        .map(h => scoreHero(h, enemies))
+        .sort((a, b) => b.score - a.score || a.hero.name.localeCompare(b.hero.name));
+
+      // Normalize all scores to 0–5 range
+      if (scored.length) {
+        const maxScore = scored[0].score;
+        const minScore = scored[scored.length - 1].score;
+        const range = maxScore - minScore;
+        scored.forEach(item => {
+          item.score = range > 0 ? ((item.score - minScore) / range) * 5 : 2.5;
+        });
+      }
+
+      if (!scored.length) {
+        topHeroes = [];
+        selectedPerkHero = null;
+        dom.results.innerHTML = `<div class="empty-state compact"><h3>No valid pick</h3></div>`;
+        return;
+      }
+
+      topHeroes = scored.slice(0, 4);
+      if (!selectedPerkHero || !topHeroes.find(h => h.hero.name === selectedPerkHero)) {
+        selectedPerkHero = topHeroes[0].hero.name;
+      }
+
+      const selected = topHeroes.find(h => h.hero.name === selectedPerkHero);
+      const alts = topHeroes.filter(h => h.hero.name !== selectedPerkHero);
+      dom.results.innerHTML = `
+        <div class="result-grid">
+          <article class="best-card highlight oq-pick-card perk-selected" data-hero="${selected.hero.name}">
+            <div class="result-hero">
+              <div class="name-stack">
+                <span class="hero-emoji hero-emoji-lg" role="img" aria-label="${selected.hero.name}">${selected.hero.emoji}</span>
+                <div class="hero-name-under">${selected.hero.name}</div>
+              </div>
+              <div>
+                <span class="mini-tag enemy-tag">Score ${selected.score.toFixed(1)}</span>
+                <h3>${selected.hero.role} pick</h3>
+                <div class="reason-line">${selected.summary}</div>
+                <div class="tip-list">${selected.hero.tips.slice(0,3).map(t => `<div class="tip">${t}</div>`).join('')}</div>
+              </div>
+            </div>
+          </article>
+          <div class="alt-list">${alts.map(a => `
+            <article class="alt-card oq-pick-card" data-hero="${a.hero.name}">
+              <div class="name-stack small"><span class="hero-emoji hero-emoji-sm" role="img" aria-label="${a.hero.name}">${a.hero.emoji}</span><div class="hero-name-under">${a.hero.name}</div></div>
+              <h3>${a.hero.role}</h3>
+              <div class="reason-line">${a.summary}</div>
+              <div class="score-pill">Score ${a.score.toFixed(1)}</div>
+            </article>`).join('')}
+          </div>
+        </div>`;
+
+      dom.results.querySelectorAll('.oq-pick-card').forEach(card => {
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', () => {
+          selectedPerkHero = card.dataset.hero;
+          renderResults();
+          renderPerks();
+        });
+      });
+    }
+
+    function scoreHero(hero, enemies) {
+      let score = 0;
+      const beats = [], worries = [];
+      enemies.forEach(enemyName => {
+        const enemy = HERO_BY_NAME[enemyName];
+        if (!enemy) return;
+        if (hero.strong_against.includes(enemyName)) { score += 1.5; beats.push(enemyName); }
+        if (hero.weak_against.includes(enemyName)) { score -= 1.2; worries.push(enemyName); }
+        if (enemy.strong_against.includes(hero.name)) { score -= 1.0; worries.push(enemyName); }
+      });
+      const good = unique(beats).slice(0, 2).join(' and ');
+      const bad = unique(worries).slice(0, 1).join('');
+      let summary = good ? `${hero.name} plays well into ${good}.` : `${hero.name} is a stable pick here.`;
+      if (bad) summary += ` Watch ${bad}.`;
+      return { hero, score, summary };
+    }
+
+    // --- Bans ---
+    function renderBans() {
+      const enemies = getNames();
+      if (!enemies.length) {
+        dom.bans.innerHTML = `<div class="empty-state compact"><h3>No bans yet</h3><p>Add enemies to see the biggest threats to remove.</p></div>`;
+        return;
+      }
+      const list = HERO_DB
+        .filter(h => !enemies.includes(h.name))
+        .map(h => {
+          let score = 0;
+          enemies.forEach(enemy => { if (h.strong_against.includes(enemy)) score += 1.2; });
+          return { hero: h, score };
+        })
+        .filter(item => item.score > 0)
+        .sort((a, b) => b.score - a.score || a.hero.name.localeCompare(b.hero.name))
+        .slice(0, 2);
+
+      if (!list.length) {
+        dom.bans.innerHTML = `<div class="empty-state compact"><h3>No clear bans</h3><p>No hero stands out as a must-ban right now.</p></div>`;
+        return;
+      }
+      dom.bans.innerHTML = list.map(item => `
+        <article class="ban-card">
+          <div class="lookup-mini">
+            <span class="hero-emoji" role="img" aria-label="${item.hero.name}">${item.hero.emoji}</span>
+            <div>
+              <span class="mini-tag enemy-tag">Ban target</span>
+              <h3>${item.hero.name}</h3>
+              <div class="reason-line">${item.hero.name} is dangerous into your plan and adds pressure to this draft.</div>
+            </div>
+          </div>
+        </article>`).join('');
+    }
+
+    // --- Perks ---
+    function renderPerks() {
+      const enemies = getNames();
+      if (!selectedPerkHero || !enemies.length) {
+        dom.perks.innerHTML = `<div class="empty-state compact"><h3>No perk plan yet</h3><p>Your best counter pick will generate perk recommendations.</p></div>`;
+        return;
+      }
+      const hero = HERO_BY_NAME[selectedPerkHero];
+      const perks = HERO_PERKS[hero.name];
+      if (!perks) {
+        dom.perks.innerHTML = `<div class="empty-state compact"><h3>No perks available</h3><p>No perk data for ${hero.name}.</p></div>`;
+        return;
+      }
+      const allPerks = [
+        ...perks.minor.map(p => ({ ...p, type: 'Minor' })),
+        ...perks.major.map(p => ({ ...p, type: 'Major' }))
+      ];
+      dom.perks.innerHTML = `<div class="perk-hero-label"><span class="hero-emoji hero-emoji-sm" role="img" aria-label="${hero.name}">${hero.emoji}</span><span>Perks for <strong>${hero.name}</strong></span></div>` + allPerks.map(perk => `
+        <article class="perk-card ${perk.recommended ? 'recommended' : ''}">
+          <div class="perk-topline">
+            <span class="perk-type">${perk.type}</span>
+            <span class="perk-pick">${perk.pick}% pick rate</span>
+            ${perk.recommended ? `<span class="perk-win">Recommended</span>` : ''}
+          </div>
+          <h3>${perk.name}</h3>
+          <p>${perk.desc}</p>
+        </article>`).join('');
+    }
+
+    // --- Utilities ---
+    function unique(arr) { return [...new Set(arr)]; }
+
+    function bindTooltip(el, hero) {
+      el.addEventListener('mouseenter', e => showTooltip(e, hero));
+      el.addEventListener('mousemove', moveTooltip);
+      el.addEventListener('mouseleave', hideTooltip);
+    }
+    function showTooltip(e, hero) {
+      dom.tooltip.innerHTML = `<strong>${hero.name}</strong>${hero.role} • ${hero.tips[0]}`;
+      dom.tooltip.classList.remove('hidden');
+      moveTooltip(e);
+    }
+    function moveTooltip(e) {
+      if (dom.tooltip.classList.contains('hidden')) return;
+      const x = Math.min(window.innerWidth - dom.tooltip.offsetWidth - 12, e.clientX + 14);
+      const y = Math.min(window.innerHeight - dom.tooltip.offsetHeight - 12, e.clientY + 14);
+      dom.tooltip.style.left = `${Math.max(12,x)}px`;
+      dom.tooltip.style.top = `${Math.max(12,y)}px`;
+    }
+    function hideTooltip() { dom.tooltip.classList.add('hidden'); }
+  })();
+  </script>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-links">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
+        <a href="about.html">About</a>
+      </div>
+      <p class="footer-copy">&copy; 2026 CounterPick. Not affiliated with Blizzard Entertainment.</p>
+    </div>
+  </footer>
+
+</body>
+</html>

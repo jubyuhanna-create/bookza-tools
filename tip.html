@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CounterPick Tip of the Day — get a fresh gameplay tip for a random Overwatch 2 hero every day to improve your skills.">
+  <title>CounterPick – Tip of the Day</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=7">
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="logo">
+        <div class="logo-icon">CP</div>
+        <div>
+          <h1>CounterPick</h1>
+          <p class="eyebrow">OVERWATCH 2 COUNTER TOOL</p>
+        </div>
+      </div>
+    </div>
+    <nav class="topbar-nav">
+      <a class="nav-link" href="index.html">Flex Queue</a>
+      <a class="nav-link" href="open-queue.html">Open Queue</a>
+      <a class="nav-link" href="hero-insights.html">Patch &amp; Meta</a>
+      <a class="nav-link active" href="tip.html">Tip of the Day</a>
+      <a class="nav-link" href="strategy.html">Strategy</a>
+    </nav>
+    <div class="topbar-actions"></div>
+  </header>
+
+  <main style="padding:16px 20px;max-width:700px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
+    <section class="card card-accent" id="tip-card">
+      <div class="card-header">
+        <h2>Tip of the Day</h2>
+        <span class="badge badge-orange" id="tip-date"></span>
+      </div>
+      <div id="tip-content" style="display:flex;flex-direction:column;align-items:center;gap:16px;padding:20px 0">
+        <div id="tip-hero-emoji" style="font-size:80px;line-height:1;width:120px;height:120px;display:flex;align-items:center;justify-content:center;border-radius:16px;border:2px solid var(--gold-dim);background:var(--bg-card-alt)"></div>
+        <div style="text-align:center">
+          <h3 id="tip-hero-name" style="font-size:22px;color:var(--gold-bright);margin:0 0 4px"></h3>
+          <span id="tip-hero-role" class="mini-tag" style="margin-bottom:14px;display:inline-block"></span>
+        </div>
+        <div id="tip-text" style="font-size:15px;line-height:1.65;color:var(--text);background:var(--bg-card-alt);border:1px solid var(--border);border-radius:10px;padding:16px 20px;max-width:500px;text-align:center"></div>
+      </div>
+    </section>
+
+    <section class="card" id="extra-tips">
+      <div class="card-header">
+        <h2>More tips for this hero</h2>
+      </div>
+      <div id="extra-tips-list" style="display:flex;flex-direction:column;gap:8px"></div>
+    </section>
+
+    <section class="card">
+      <div class="card-header">
+        <h2>Matchup Quick Look</h2>
+      </div>
+      <div id="matchup-section" style="display:flex;flex-direction:column;gap:10px"></div>
+    </section>
+  </main>
+
+  <script src="data.js"></script>
+  <script>
+  (function () {
+    const HERO_BY_NAME = Object.fromEntries(HERO_DB.map(h => [h.name, h]));
+
+    const DAILY_TIPS = [
+      { hero: "Reinhardt", text: "Reinhardt's hammer does 85 damage per swing and cleaves through every target in front of him. In a tight doorway, that's potentially 425 damage per swing on a full team." },
+      { hero: "D.Va", text: "D.Va's Self-Destruct does 1000 damage at the center. You can combo Boosters into ult to send the mech flying across the map like a nuclear delivery service." },
+      { hero: "Winston", text: "Winston was originally named \"Specimen 28\" during development. He taught himself science by watching old recordings of Dr. Harold Winston on the Horizon Lunar Colony." },
+      { hero: "Tracer", text: "Tracer's Pulse Bomb sticks to enemies and does 350 damage. That's enough to delete any squishy, but somehow you'll still miss it on a sleeping Roadhog." },
+      { hero: "Mercy", text: "Mercy can super jump by crouch-jumping during Guardian Angel. If you master it, you become the most annoying target in the game. If you don't, you just crouch awkwardly." },
+      { hero: "Genji", text: "Genji's Deflect can reflect almost every projectile in the game, including Graviton Surge. Yes, you can send a black hole back. No, it won't happen in your ranked games." },
+      { hero: "Zenyatta", text: "Zenyatta has no footstep sounds because he floats. This makes him one of the sneakiest heroes in the game despite having zero mobility abilities." },
+      { hero: "Sombra", text: "Sombra can see enemies below 50% HP through walls while invisible. She's basically playing a different game than everyone else." },
+      { hero: "Roadhog", text: "Roadhog's hook has been reworked more times than any other ability in Overwatch history. At one point it could pull people through walls. Dark times." },
+      { hero: "Pharah", text: "Pharah is the daughter of Ana Amari, making them the only confirmed parent-child duo in the roster. Family dinners must be awkward when mom keeps sleep darting you." },
+      { hero: "Cassidy", text: "Cassidy was renamed from his original name in 2021. His Deadeye ultimate charges faster the more enemies are in his line of sight, so try to catch them grouped up." },
+      { hero: "Bastion", text: "Bastion's bird companion is named Ganymede. Ganymede is also one of Jupiter's moons. Bastion doesn't know this because Bastion is a robot who beeps." },
+      { hero: "Mei", text: "Mei was cryogenically frozen for 9 years before the events of Overwatch. Her age is technically listed as 31 but she's really 40. Cryosleep doesn't count apparently." },
+      { hero: "Lúcio", text: "Lúcio's music actually changes between his speed and healing auras. Most players never notice because they're too busy wall-riding into the abyss." },
+      { hero: "Ana", text: "Ana is the oldest human hero in the roster at 60. She's also one of the founding members of Overwatch. Respect your elders, especially when they have a sniper rifle." },
+      { hero: "Sigma", text: "Sigma is the only tank who wears no shoes. He floats barefoot because of his gravity manipulation powers. His lore is genuinely one of the darkest in the game." },
+      { hero: "Reaper", text: "Reaper's shotguns are never reloaded. He just throws them on the ground and pulls out new ones. Where he keeps an infinite supply of shotguns is Overwatch's greatest mystery." },
+      { hero: "Widowmaker", text: "Widowmaker's heart rate was slowed by Talon's genetic modifications, giving her blue skin. She literally has ice in her veins. Your Widowmaker in ranked does not." },
+      { hero: "Junkrat", text: "Junkrat's Total Mayhem passive drops grenades on death. More eliminations happen from dead Junkrats than anyone wants to admit." },
+      { hero: "Symmetra", text: "Symmetra is canonically autistic, making her one of the first openly autistic characters in a major multiplayer game. She's also an architect with a light-bending gun, which is cooler than your job." },
+      { hero: "Torbjörn", text: "Torbjörn has the most children of any Overwatch hero with eight kids. Brigitte is one of them. He also built Bastion's bird house. Wholesome content." },
+      { hero: "Brigitte", text: "Brigitte's shield has only 300 HP. That's less than Reinhardt's health bar. Use it to block key abilities, not to face-tank a Bastion." },
+      { hero: "Moira", text: "Moira's damage orb does a maximum of 200 damage total, split across all targets it hits. Throwing it into a group of 5 does less per person than you think." },
+      { hero: "Doomfist", text: "Doomfist's gauntlet is one of the most powerful weapons in the Overwatch universe. In ranked, it's mostly used to punch yourself off the map." },
+      { hero: "Orisa", text: "Orisa was built by an 11-year-old genius named Efi Oladele. An 11-year-old made a better tank than most game developers manage in a decade." },
+      { hero: "Wrecking Ball", text: "Wrecking Ball is a genetically modified hamster named Hammond. He escaped the Horizon Lunar Colony in a mech he built himself. He is a hamster. In a mech. This is canon." },
+      { hero: "Sojourn", text: "Sojourn's Railgun secondary fire has no damage falloff. A fully charged headshot does 300 damage from any range. Yes, that deletes most heroes instantly." },
+      { hero: "Kiriko", text: "Kiriko's Protection Suzu cleanses almost every debuff in the game including anti-heal, sleep, freeze, and hack. It also grants brief invulnerability. It's basically a panic button that actually works." },
+      { hero: "Junker Queen", text: "Junker Queen rules Junkertown through combat. Her throne is literally made of scrap metal and violence. She would absolutely win any reality TV show." },
+      { hero: "Ramattra", text: "Ramattra is Zenyatta's brother, but they have very different views on human-omnic relations. Family reunions in the Shambali monastery must be tense." },
+      { hero: "Illari", text: "Illari's Healing Pylon has 100 HP and heals 40 HP per second. Placing it around corners where enemies can't easily shoot it is free value." },
+      { hero: "Mauga", text: "Mauga dual-wields chainguns named \"Gunny\" and \"Cha-Cha.\" Yes, he named his guns. Yes, one of them is named Cha-Cha. This man is unhinged." },
+      { hero: "Venture", text: "Venture is an archaeologist who fights with a drill. They're basically a combination of Indiana Jones and a construction worker, and somehow it works." },
+      { hero: "Hazard", text: "Hazard's spikes deal retaliation damage when enemies hit him during Spike Guard. Punching a Hazard who has Spike Guard active is like high-fiving a cactus." },
+      { hero: "Domina", text: "Domina's Barrier Array has individual segment health pools. Smart players break one panel and shoot through the gap instead of trying to destroy the whole thing." },
+      { hero: "Hanzo", text: "Hanzo's Dragonstrike passes through all barriers and walls. It does 200 DPS to anyone inside it. Most of the time it hits absolutely nothing." },
+      { hero: "Soldier: 76", text: "Soldier: 76's Tactical Visor gives him perfect aim for 6 seconds. In a game about mechanical skill, pressing Q to auto-aim will never not be funny." },
+      { hero: "Echo", text: "Echo's Duplicate ultimate copies an enemy hero and charges their ult 6.5x faster. You can get 2-3 ultimates in a single Duplicate if you play it right." },
+      { hero: "Ashe", text: "Ashe's butler B.O.B. counts as a seventh player when active. He can contest the objective, get healed, get nanoed, and get discorded. B.O.B. has a harder life than most players." },
+      { hero: "Baptiste", text: "Baptiste's Immortality Field prevents anyone inside from dropping below 10% HP. The lamp has 150 HP though, so shooting it is always the right play." },
+      { hero: "Zarya", text: "Zarya at maximum energy does 170 DPS with her primary fire beam. That's more DPS than most damage heroes. A fully charged Zarya is the scariest thing in Overwatch." },
+      { hero: "Lifeweaver", text: "Lifeweaver can pull allies to him with Life Grip, whether they want it or not. He has accidentally killed more teammates than most enemy players." },
+      { hero: "Tracer", text: "Tracer was the first hero designed for Overwatch and appears on the game's cover. She's also the fastest hero in base movement speed at 6 meters per second." },
+      { hero: "Genji", text: "Genji needs healing. This is not a tip. This is a fact of life. Every Genji needs healing. Even when they're full HP. Especially when they're full HP." },
+      { hero: "Mercy", text: "Mercy's damage boost increases an ally's damage by 30%. Boosting a Widowmaker headshot turns it from 300 to 390 damage. That kills literally everything." },
+      { hero: "Zenyatta", text: "Zenyatta's kick melee does 45 damage instead of the standard 30. He's a monk who kicks harder than he punches. Omnic martial arts are no joke." },
+      { hero: "Sombra", text: "If you hack a health pack as Sombra, it respawns 3x faster and can only be used by your team. Most Sombra players forget this ability exists." },
+      { hero: "Wrecking Ball", text: "You can boop enemies off the map with Wrecking Ball's Piledriver if you land on the edge of a cliff near them. This is advanced hamster technology." },
+      { hero: "Ana", text: "Ana's Nano Boost grants 50% damage boost and 50% damage reduction. Nano-Blade Genji is terrifying but Nano-Rein charging into your backline hits different." },
+      { hero: "Widowmaker", text: "A fully charged Widowmaker bodyshot does 120 damage. That means two bodyshots kill any 200 HP hero. You don't always need the headshot." },
+      { hero: "Reinhardt", text: "Reinhardt's Earthshatter travels along the ground for 20 meters. It can be blocked by any barrier, payload, or even a tiny curb on the map. Geometry is Reinhardt's true counter." },
+      { hero: "Cassidy", text: "Cassidy's Magnetic Grenade homes in on the nearest enemy. You can throw it around corners and over shields. It's basically a guided missile shaped like a flashbang." },
+      { hero: "Vendetta", text: "Vendetta's overhead swing applies a movement penalty to victims. Getting hit by it feels like running through invisible mud while a sword enthusiast chases you." },
+      { hero: "Anran", text: "Anran's fire debuff amplifies her follow-up damage. Setting someone on fire and then fanning them is her entire gameplay loop, and it's devastating when it connects." },
+      { hero: "Emre", text: "Emre rewards aggressive play through his Specialist passive. He's the kind of hero where pushing forward is literally part of his kit design." },
+      { hero: "Freja", text: "Freja's Recon passive lets her see low-health enemies through walls. She's essentially playing with legal wallhacks for finishing kills." },
+      { hero: "Jetpack Cat", text: "Jetpack Cat can tow allies through the sky. Getting Hacked mid-flight drops whoever you're carrying. Sombra is basically air traffic control against Jetpack Cat." },
+      { hero: "Wuyang", text: "Wuyang's water-based projectiles hit harder when fully charged. Patience is rewarded, which is the opposite of how most Overwatch players behave." },
+      { hero: "Mizuki", text: "Mizuki's Binding Chain can root highly mobile targets in place. Watching a Wrecking Ball get chained mid-roll never gets old." },
+      { hero: "Juno", text: "Juno's aerial repositioning makes her great at reaching teammates in trouble, but her predictable flight arcs make hitscan players very happy." },
+      { hero: "D.Va", text: "D.Va's mech has 350 armor and 300 HP. When her mech is destroyed, she ejects as Baby D.Va with 150 HP and a surprisingly lethal pistol. Never underestimate Baby D.Va." },
+      { hero: "Sigma", text: "Sigma's rock (Accretion) does up to 100 damage and stuns. It goes through Defense Matrix because it's a physical object, not a projectile. Game logic." },
+      { hero: "Moira", text: "Moira can Fade out of Junkrat's trap, Zarya's Graviton, and Sigma's Gravitic Flux. She's essentially made of smoke and poor sportsmanship." },
+      { hero: "Pharah", text: "Pharah's rockets do 120 direct damage but only 65 splash. The difference between a direct hit Pharah and a splash Pharah is the difference between a carry and a feeder." },
+      { hero: "Reaper", text: "Reaper heals for 30% of all damage he deals. Against a tank with 600+ HP, that's basically a full heal per magazine. He was designed to eat tanks alive." },
+      { hero: "Lúcio", text: "Lúcio's wall-ride gives him a speed boost when he jumps off. Chaining wall-rides makes him one of the fastest heroes in the game. Also the most annoying to shoot." },
+      { hero: "Torbjörn", text: "Torbjörn's turret has 250 HP and does 56 DPS with perfect aim. It never misses, never panics, and never types in chat. It's the ideal teammate honestly." },
+      { hero: "Bastion", text: "Bastion in Assault mode does 360 DPS. For context, that kills a full-health Roadhog in about 1.9 seconds. Barriers are Bastion's breakfast." },
+      { hero: "Symmetra", text: "Symmetra's teleporter can move things like Torbjörn's turret and B.O.B. Teleporting a turret behind enemy lines is galaxy brain energy." },
+      { hero: "Baptiste", text: "Baptiste can shoot and heal at the same time by alternating primary and secondary fire. He's one of the few supports who can actively frag while keeping the team alive." },
+      { hero: "Kiriko", text: "Kiriko can Swift Step through walls to reach allies. This means she can escape situations that would kill any other support. She's basically a support with cheat codes." },
+      { hero: "Roadhog", text: "Roadhog's hook range is 20 meters. That's about the distance from your spawn to the point on most Control maps. If you can see a Roadhog, he can hook you." },
+      { hero: "Mei", text: "Mei's Ice Wall lifts allies and enemies standing on top of it. You can use this to boost teammates to high ground or troll them into the skybox. Choose wisely." },
+      { hero: "Mauga", text: "Mauga's chainguns have different properties. One ignites targets, the other crits ignited targets. Using both together is how you become a walking war crime." },
+      { hero: "Junker Queen", text: "Junker Queen's Rampage shout applies anti-heal to all enemies it hits. It's basically Ana's grenade but in a giant cone. Rush comps love her for this." },
+      { hero: "Ramattra", text: "Ramattra in Nemesis Form has 150 bonus armor and his punches go through barriers. He turns from a poker into a brawler with one button press." },
+      { hero: "Illari", text: "Illari's Captive Sun ultimate does 120 initial damage and primes enemies. If they take any additional damage, they explode for 200 more. Don't shoot people with a sun on them. Actually, always shoot people with a sun on them." },
+      { hero: "Hanzo", text: "Hanzo's Storm Arrows fire 5 arrows at 65 damage each. That's 325 potential damage in about 1 second. It's his 'I actually need to kill something right now' button." },
+      { hero: "Echo", text: "Echo was the last hero added before Overwatch 2 launched. Her Sticky Bombs do 25 damage on impact plus 150 when they detonate. That's 175 per bomb if all 6 stick." },
+      { hero: "Soldier: 76", text: "Soldier: 76 sprints faster than every other hero's base walk speed. If you're losing a fight as Soldier, just run. No shame in a tactical retreat." }
+    ];
+
+    // Seed based on today's date (resets at midnight local time)
+    function dayHash() {
+      const d = new Date();
+      const str = `${d.getFullYear()}-${String(d.getMonth()).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        hash = ((hash << 5) - hash) + str.charCodeAt(i);
+        hash |= 0;
+      }
+      return Math.abs(hash);
+    }
+
+    const seed = dayHash();
+    const dailyTip = DAILY_TIPS[seed % DAILY_TIPS.length];
+    const hero = HERO_BY_NAME[dailyTip.hero] || HERO_DB[seed % HERO_DB.length];
+
+    // Date display
+    const today = new Date();
+    document.getElementById('tip-date').textContent = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+    // Hero info
+    const emojiEl = document.getElementById('tip-hero-emoji');
+    emojiEl.textContent = hero.emoji;
+    emojiEl.setAttribute('role', 'img');
+    emojiEl.setAttribute('aria-label', hero.name);
+
+    document.getElementById('tip-hero-name').textContent = hero.name;
+    const roleEl = document.getElementById('tip-hero-role');
+    roleEl.textContent = hero.role;
+    const roleColors = { Tank: 'var(--tank)', Damage: 'var(--dps)', Support: 'var(--green)' };
+    roleEl.style.color = roleColors[hero.role] || 'var(--gold)';
+    roleEl.style.borderColor = roleColors[hero.role] || 'var(--gold)';
+
+    // Main tip
+    document.getElementById('tip-text').textContent = dailyTip.text;
+
+    // Other tips from hero data
+    const extraList = document.getElementById('extra-tips-list');
+    hero.tips.forEach(t => {
+      const div = document.createElement('div');
+      div.style.cssText = 'font-size:13px;line-height:1.55;color:var(--text-secondary);padding:10px 14px;background:var(--bg-card-alt);border:1px solid var(--border);border-radius:8px';
+      div.textContent = t;
+      extraList.appendChild(div);
+    });
+    if (extraList.children.length === 0) {
+      extraList.innerHTML = '<p style="color:var(--text-secondary);font-size:13px">No extra tips for this hero.</p>';
+    }
+
+    // Matchup section
+    const matchup = document.getElementById('matchup-section');
+    let html = '';
+    if (hero.strong_against.length) {
+      html += '<div><div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Strong against</div><div style="display:flex;flex-wrap:wrap;gap:6px">';
+      hero.strong_against.forEach(n => {
+        html += `<span style="font-size:12px;padding:4px 10px;background:var(--green-dim);border:1px solid var(--green);border-radius:6px;color:var(--green)">${n}</span>`;
+      });
+      html += '</div></div>';
+    }
+    if (hero.weak_against.length) {
+      html += '<div><div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Weak against</div><div style="display:flex;flex-wrap:wrap;gap:6px">';
+      hero.weak_against.forEach(n => {
+        html += `<span style="font-size:12px;padding:4px 10px;background:var(--red-dim);border:1px solid var(--red);border-radius:6px;color:var(--red)">${n}</span>`;
+      });
+      html += '</div></div>';
+    }
+    if (hero.strategic_rationale) {
+      html += `<div style="margin-top:6px"><div style="font-size:12px;font-weight:600;color:var(--gold-bright);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Why these matchups</div><div style="font-size:13px;line-height:1.55;color:var(--text-secondary);padding:10px 14px;background:var(--bg-card-alt);border:1px solid var(--border);border-radius:8px">${hero.strategic_rationale}</div></div>`;
+    }
+    matchup.innerHTML = html;
+
+    // Countdown to next tip
+    const now = new Date();
+    const midnight = new Date(now);
+    midnight.setHours(24, 0, 0, 0);
+    const msLeft = midnight - now;
+    const hrsLeft = Math.floor(msLeft / 3600000);
+    const minsLeft = Math.floor((msLeft % 3600000) / 60000);
+    const countdown = document.createElement('div');
+    countdown.style.cssText = 'text-align:center;font-size:12px;color:var(--text-secondary);margin-top:8px';
+    countdown.textContent = `Next tip in ${hrsLeft}h ${minsLeft}m`;
+    document.getElementById('tip-card').appendChild(countdown);
+
+  })();
+  </script>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-links">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
+        <a href="about.html">About</a>
+      </div>
+      <p class="footer-copy">&copy; 2026 CounterPick. Not affiliated with Blizzard Entertainment.</p>
+    </div>
+  </footer>
+
+</body>
+</html>
