@@ -11,6 +11,205 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=8" />
+  <style>
+    /* ═══ SEO Content Section ═══ */
+    .seo-content {
+      max-width: 900px;
+      margin: 32px auto 0;
+      padding: 0 20px;
+    }
+    .seo-content h2 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--gold-bright);
+      margin-bottom: 12px;
+      letter-spacing: -.02em;
+    }
+    .seo-content h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--gold);
+      margin: 24px 0 8px;
+    }
+    .seo-content p {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+    .seo-content strong {
+      color: var(--text);
+    }
+    .seo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .seo-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .seo-card h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .seo-card p {
+      font-size: 13px;
+      margin: 0;
+    }
+    .counter-type-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      margin-bottom: 8px;
+    }
+    .hard-badge { background: var(--red-dim); color: var(--red); border: 1px solid rgba(196,64,64,.2); }
+    .soft-badge { background: var(--gold-dim); color: var(--gold); border: 1px solid rgba(200,162,60,.2); }
+
+    /* ═══ Hero Descriptions Section ═══ */
+    .hero-desc-section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .hero-desc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .hero-desc-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      transition: var(--transition);
+    }
+    .hero-desc-card:hover { border-color: var(--gold); }
+    .hero-desc-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .hero-desc-emoji {
+      font-size: 28px;
+      width: 44px;
+      height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      border: 2px solid var(--border);
+      background: var(--bg-card-alt);
+    }
+    .hero-desc-meta { display: flex; flex-direction: column; gap: 3px; }
+    .hero-desc-name { font-size: 14px; font-weight: 700; color: var(--gold-bright); }
+    .hero-desc-role { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-secondary); }
+    .hero-desc-body { font-size: 12px; line-height: 1.65; color: var(--text-secondary); }
+    .hero-desc-counters { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+    .hero-desc-counters span { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text-secondary); display: block; margin-bottom: 4px; }
+    .counter-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .counter-tag {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: var(--red-dim);
+      color: var(--red);
+      border: 1px solid rgba(196,64,64,.15);
+    }
+
+    /* ═══ FAQ Section ═══ */
+    .faq-section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px 48px;
+    }
+    .faq-section h2 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--gold-bright);
+      margin-bottom: 4px;
+      letter-spacing: -.02em;
+    }
+    .faq-section .faq-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+    .faq-list { display: grid; gap: 10px; }
+    .faq-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    .faq-item:hover { border-color: var(--gold); }
+    .faq-question {
+      width: 100%;
+      text-align: left;
+      padding: 16px 20px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      transition: var(--transition);
+    }
+    .faq-question:hover { color: var(--gold); }
+    .faq-question[aria-expanded="true"] { color: var(--gold); }
+    .faq-chevron {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      background: var(--gold-dim);
+      border: 1px solid rgba(200,162,60,.2);
+      display: grid;
+      place-items: center;
+      font-size: 10px;
+      color: var(--gold);
+      transition: transform var(--transition);
+    }
+    .faq-question[aria-expanded="true"] .faq-chevron { transform: rotate(180deg); }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    .faq-answer.open { max-height: 600px; }
+    .faq-answer-inner {
+      padding: 0 20px 16px;
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+    }
+    .faq-answer-inner strong { color: var(--text); }
+
+    @media(max-width:620px) {
+      .seo-grid { grid-template-columns: 1fr; }
+      .hero-desc-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
 
@@ -68,20 +267,20 @@
         <div class="slot-groups">
           <div class="slot-group">
             <div class="slot-role-title tank-label">Tank</div>
-            <button class="hero-slot tank-slot" data-slot="tank" data-role="Tank" type="button"></button>
+            <button class="hero-slot tank-slot" data-slot="tank" data-role="Tank" type="button" aria-label="Select enemy tank hero"></button>
           </div>
           <div class="slot-group">
             <div class="slot-role-title dps-label">Damage</div>
             <div class="slot-row">
-              <button class="hero-slot damage-slot" data-slot="damage1" data-role="Damage" type="button"></button>
-              <button class="hero-slot damage-slot" data-slot="damage2" data-role="Damage" type="button"></button>
+              <button class="hero-slot damage-slot" data-slot="damage1" data-role="Damage" type="button" aria-label="Select first enemy damage hero"></button>
+              <button class="hero-slot damage-slot" data-slot="damage2" data-role="Damage" type="button" aria-label="Select second enemy damage hero"></button>
             </div>
           </div>
           <div class="slot-group">
             <div class="slot-role-title heal-label">Support</div>
             <div class="slot-row">
-              <button class="hero-slot support-slot" data-slot="support1" data-role="Support" type="button"></button>
-              <button class="hero-slot support-slot" data-slot="support2" data-role="Support" type="button"></button>
+              <button class="hero-slot support-slot" data-slot="support1" data-role="Support" type="button" aria-label="Select first enemy support hero"></button>
+              <button class="hero-slot support-slot" data-slot="support2" data-role="Support" type="button" aria-label="Select second enemy support hero"></button>
             </div>
           </div>
         </div>
@@ -164,12 +363,210 @@
     </div>
   </main>
 
+  <!-- ═══════════════════════════════════════════════════════
+       SEO CONTENT LAYER — Strategic Overwatch 2 Guide
+       Visible to Google crawler, adds keyword density and E-E-A-T signals
+       ═══════════════════════════════════════════════════════ -->
+
+  <section class="seo-content" aria-label="Overwatch 2 counter-pick strategy guide">
+    <h2>How to Counter-Pick in Overwatch 2 — A Complete Guide</h2>
+
+    <p>
+      <strong>Counter-picking</strong> is one of the highest-leverage skills in Overwatch 2. While individual aim and mechanics matter, choosing the right hero for the situation — one whose abilities directly negate what the enemy team is doing — can swing a match decisively. CounterPick is designed to make this process fast, systematic, and grounded in actual game mechanics rather than vague tier-list intuition.
+    </p>
+
+    <p>
+      This guide explains the core concepts behind Overwatch 2 counter-picking: the difference between hard counters and soft counters, how map mode affects hero viability, how to read an enemy team composition, and how to think about the ban phase strategically. Understanding these concepts will help you use CounterPick more effectively and make better decisions independently.
+    </p>
+
+    <h3>Hard Counter vs. Soft Counter: Understanding the Difference</h3>
+
+    <div class="seo-grid">
+      <div class="seo-card">
+        <div class="counter-type-badge hard-badge">Hard Counter</div>
+        <h4>Mechanical Negation</h4>
+        <p>A <strong>hard counter</strong> is a hero whose core abilities directly neutralize an opponent's primary tools. The counter relationship is rooted in game mechanics, not playstyle. A classic example is <strong>D.Va countering Widowmaker</strong>: Defense Matrix can eat every scoped shot Widowmaker fires, completely removing her damage output. Another is <strong>Kiriko countering Junker Queen</strong>: Protection Suzu cleanses the bleed status that provides Junker Queen's entire sustain, effectively resetting the fight every time it is used. Hard counters win by making the countered hero's kit functionally useless, regardless of the player's skill level.</p>
+      </div>
+      <div class="seo-card">
+        <div class="counter-type-badge soft-badge">Soft Counter</div>
+        <h4>Positional Disadvantage</h4>
+        <p>A <strong>soft counter</strong> is a hero that has a statistical or positional advantage over another — but the countered hero can overcome it through skill, positioning, or team support. For example, <strong>Cassidy is a soft counter to Genji</strong>: Magnetic Grenade can punish Genji's close-range approaches and makes it harder for him to one-clip, but a highly skilled Genji with good cooldown discipline can still be effective. Soft counters shift the odds rather than change the fundamental mechanic. They are important in competitive play but should not be used as an absolute swap trigger the way hard counters should be.</p>
+      </div>
+    </div>
+
+    <h3>Reading the Enemy Team Composition</h3>
+
+    <p>
+      Before picking a counter, you need to understand what the enemy team is <em>trying to do</em>. Overwatch 2 team compositions broadly fall into several archetypes, each with different strengths and countering approaches:
+    </p>
+
+    <div class="seo-grid">
+      <div class="seo-card">
+        <h4>Dive Composition</h4>
+        <p>Characterized by high-mobility heroes (Winston, D.Va, Tracer, Genji, Kiriko) that leap onto the enemy backline simultaneously. Counter with: <strong>heroes that have area denial</strong> (Symmetra turrets, Torbjörn turret, Mei walls), <strong>self-peel tools</strong> (Brigitte, Moira Fade, Zenyatta's massive shield health), or <strong>hard CC</strong> (Cassidy Flashbang, Hazard Spike Guard).</p>
+      </div>
+      <div class="seo-card">
+        <h4>Brawl Composition</h4>
+        <p>Emphasizes close-range sustain and damage (Reinhardt, Reaper, Moira, Lúcio). Counter with: <strong>poke and range advantage</strong> (Sigma, Widowmaker, Ashe), <strong>anti-heal</strong> (Ana Biotic Grenade is the single best tool against brawl teams), or <strong>aerial heroes</strong> (Pharah, Echo) that avoid melee range entirely.</p>
+      </div>
+      <div class="seo-card">
+        <h4>Poke Composition</h4>
+        <p>Uses sustained long-range damage (Sigma, Widowmaker, Sojourn, Ana, Baptiste) to whittle enemies down from safety. Counter with: <strong>dive</strong> to force them into close quarters they cannot handle, <strong>shields</strong> to negate sightlines (Reinhardt, Sigma barrier), or <strong>flanks</strong> (Sombra, Tracer) that bypass the front line entirely.</p>
+      </div>
+      <div class="seo-card">
+        <h4>Bunker Composition</h4>
+        <p>Maximum sustained damage from a defensive position, usually anchored around Bastion in turret form or Symmetra turrets. Counter with: <strong>mobile flankers</strong> (Genji Deflect hard-counters Bastion), <strong>shields that can absorb the angle</strong> (Sigma Kinetic Grasp absorbs Bastion's entire magazine), or <strong>Sombra's Hack</strong> to take Bastion out of configuration.</p>
+      </div>
+    </div>
+
+    <h3>Map Mode and Hero Viability</h3>
+
+    <p>
+      Map type significantly affects which heroes are viable. CounterPick accounts for map mode when calculating recommendations — here is the mechanical reasoning behind those adjustments:
+    </p>
+
+    <p>
+      <strong>Escort maps</strong> (Dorado, Route 66, Havana) have long sightlines on approach segments but tight corridors near the payload. Widowmaker and Ashe dominate on the approach. Reinhardt and brawl heroes excel once teams are fighting over the cart in tight streets. Tanks that can create sustained pressure without overextending (Sigma, Orisa) perform well throughout.
+    </p>
+
+    <p>
+      <strong>Control maps</strong> (Busan, Ilios, Nepal, Lijiang Tower, Oasis, Samoa) require heroes who can hold a single capture point. Mobile heroes like Lúcio (Speed Aura for contesting), Reaper (lifesteal in close fights), and Mei (Ice Wall to cut the point) excel. Dive comps can be effective but require fast re-engagement after deaths.
+    </p>
+
+    <p>
+      <strong>Push maps</strong> (Colosseo, Esperança, New Queen Street, Runasapi) favor sustained fighting along a linear path. Heroes with strong poke damage and good repositioning (Sojourn, Sigma) are effective, as are mobility-focused heroes that can keep the robot moving quickly.
+    </p>
+
+    <p>
+      <strong>Flashpoint maps</strong> (Aatlis, New Junk City, Suravasa) require the fastest rotations of any mode. Mobile heroes (Lúcio, Tracer, D.Va, Echo) that can contest multiple points simultaneously have a significant advantage over slower, bunker-style compositions.
+    </p>
+
+    <h3>How to Use the Ban Phase</h3>
+
+    <p>
+      The ban phase in Overwatch 2 is designed to remove the two biggest threats to your draft before the match begins. Use the <strong>Ban Suggestions</strong> panel in CounterPick to identify high-priority ban targets. The general strategic framework is:
+    </p>
+
+    <p>
+      Priority 1: <strong>Ban heroes that hard-counter your planned pick.</strong> If you intend to play Sombra, ban Brigitte (Shield Bash blocks Hack and Virus). If you plan to play a dive comp, ban Torbjörn (his turret hard-counters dive).
+    </p>
+
+    <p>
+      Priority 2: <strong>Ban heroes that enable the enemy team's most dangerous strategy.</strong> If the enemy team is running a dive comp, banning their second dive DPS weakens the coordination of the dive. If they have a strong anchor support like Ana or Kiriko, banning Ana removes the team-defining anti-heal that makes their aggression so sustainable.
+    </p>
+
+    <p>
+      Priority 3: <strong>Ban high-skill-ceiling heroes that could outperform the counter logic.</strong> A world-class Widowmaker can beat most soft counters through pure accuracy. A mechanically gifted Tracer can outplay most anti-dive setups. If you suspect the enemy team has a specialist, ban their specialist before the matchup meta applies.
+    </p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       HERO DESCRIPTIONS — SEO & Education
+       ═══════════════════════════════════════════════════════ -->
+
+  <section class="hero-desc-section" aria-label="Overwatch 2 hero counter descriptions">
+    <h2 style="font-size:22px;font-weight:800;color:var(--gold-bright);margin-bottom:4px;letter-spacing:-.02em;padding:0 0 4px">Hero Counter Breakdown</h2>
+    <p style="font-size:14px;color:var(--text-secondary);margin-bottom:16px">Detailed mechanical analysis of how to counter every Overwatch 2 hero — updated for the current patch.</p>
+
+    <div class="hero-desc-grid" id="hero-desc-grid">
+      <!-- Populated by script below -->
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       FAQ SECTION
+       ═══════════════════════════════════════════════════════ -->
+
+  <section class="faq-section" aria-label="Frequently asked questions about Overwatch 2 counter-picking">
+    <h2>Frequently Asked Questions</h2>
+    <p class="faq-subtitle">Common questions about Overwatch 2 counter-picking, hero matchups, and how to use CounterPick.</p>
+
+    <div class="faq-list" role="list">
+
+      <div class="faq-item" role="listitem">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-1">
+          What is a counter-pick in Overwatch 2, and how important is it?
+          <span class="faq-chevron" aria-hidden="true">▾</span>
+        </button>
+        <div class="faq-answer" id="faq-1" role="region">
+          <div class="faq-answer-inner">
+            <p>A <strong>counter-pick</strong> in Overwatch 2 is the act of selecting a hero whose abilities specifically negate or punish the hero being played by an opponent. Counter-picking is one of the most impactful strategic decisions you can make in a match — arguably more impactful than raw mechanical skill at lower and mid-ranks, because a hard counter relationship means the countered hero's core kit is simply less effective regardless of how well they play it.</p>
+            <p>For example, if the enemy team has a Roadhog, switching to Ana counters him extremely hard: Biotic Grenade completely negates Take a Breather, turning his primary sustain cooldown into zero healing. The Roadhog is now a 600 HP hero with no reliable self-heal in a game where he is being focused. No amount of skill compensates for that mechanical mismatch at a fundamental level.</p>
+            <p>That said, counter-picking is one factor among many. Coordination, positioning, ultimate economy, and individual mechanics all matter too. CounterPick gives you the best possible starting point — the hero that gives you the highest mechanical edge — and from there, your execution determines the outcome.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-2">
+          What is the difference between a hard counter and a soft counter in Overwatch 2?
+          <span class="faq-chevron" aria-hidden="true">▾</span>
+        </button>
+        <div class="faq-answer" id="faq-2" role="region">
+          <div class="faq-answer-inner">
+            <p>A <strong>hard counter</strong> is a hero whose core ability set mechanically negates the countered hero's primary tools. The interaction is built into the game's ability design — it is not a playstyle preference. Hard counters include relationships like <strong>Sigma's Kinetic Grasp absorbing Bastion's entire magazine</strong>, <strong>D.Va's Defense Matrix eating Widowmaker's charged shots</strong>, and <strong>Kiriko's Protection Suzu cleansing Junker Queen's bleed</strong>. Against a hard counter, even the best player on the countered hero will struggle to create value at the same rate they normally would.</p>
+            <p>A <strong>soft counter</strong> creates a statistical or positional disadvantage without fully negating the hero's kit. For example, <strong>Cassidy soft-counters Tracer</strong>: Magnetic Grenade punishes close approaches and makes one-clipping harder, but Tracer with good blink management and recall timing can still win the duel. Soft counters reward skill on both sides and are a guide to favorable matchups, not a guaranteed win condition.</p>
+            <p>CounterPick scores heroes based on both hard and soft counter relationships, weighting hard counters more heavily. When two heroes both hard-counter the same enemy, CounterPick uses map mode and team composition context to recommend the better fit for the overall situation.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-3">
+          How does map type affect counter-picking in Overwatch 2?
+          <span class="faq-chevron" aria-hidden="true">▾</span>
+        </button>
+        <div class="faq-answer" id="faq-3" role="region">
+          <div class="faq-answer-inner">
+            <p>Map type is a critical factor in hero viability and should always be considered alongside matchup data. The five Overwatch 2 map modes each favor different hero archetypes:</p>
+            <p><strong>Escort maps</strong> have long opening sightlines that reward hitscan poke heroes (Widowmaker, Ashe, Sojourn), transitioning to tight payload corridors that favor brawl. Sigma is strong throughout because he can adapt his playstyle to both phases.</p>
+            <p><strong>Control maps</strong> require heroes who can efficiently contest and hold a single point. Lúcio's Speed Aura for rotation and Reaper's lifesteal in close-range point fights are both naturally strong. Mei's Ice Wall can block off half a control point, completely splitting the enemy team's ability to contest.</p>
+            <p><strong>Push maps</strong> reward sustained fighting along a linear path. Heroes with strong poke and mobility (Sojourn, Winston, Tracer) keep the robot moving. Wide open sections before chokepoints can favor snipers, while indoor sections near the endpoint favor brawl.</p>
+            <p><strong>Flashpoint maps</strong> require the fastest possible hero rotations between multiple capture points scattered across the map. Mobile heroes like Lúcio, D.Va, Tracer, and Echo have a significant advantage here, as they can contest newly opened Flashpoints before slower heroes arrive.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-4">
+          Who are the most important heroes to ban in Overwatch 2 Flex Queue?
+          <span class="faq-chevron" aria-hidden="true">▾</span>
+        </button>
+        <div class="faq-answer" id="faq-4" role="region">
+          <div class="faq-answer-inner">
+            <p>The most important heroes to ban depend heavily on your team's planned composition and the enemy team's likely draft. However, certain heroes have consistent value as ban targets because of how broadly they affect the game:</p>
+            <p><strong>Ana</strong> is frequently the highest-priority ban target in competitive Flex Queue. Her Biotic Grenade is the most powerful single ability in the game for disrupting enemy sustain — it negates healing entirely for a critical moment, which can invalidate tank cooldowns (Roadhog's Take a Breather, Junker Queen's bleed sustain, Winston's Primal Rage regeneration). Her Sleep Dart is also a fight-winning tool against dive engages. Banning Ana forces the enemy team onto less coordinated healers.</p>
+            <p><strong>Kiriko</strong> is the second most-banned support because Protection Suzu counters so many win conditions. It cleanses anti-nade, cleanse debuffs, cleanse Discord Orb, and cleanse bleed. If your win condition involves any of these mechanics, Kiriko's presence significantly dilutes it.</p>
+            <p><strong>Sombra</strong> is a high-priority ban when your team plans to run ability-dependent heroes like Doomfist, Wrecking Ball, or Sigma. Hack disabling entire kits for four seconds in a teamfight can be decisive.</p>
+            <p>CounterPick's Ban Suggestions panel calculates these priorities dynamically based on your specific hero selection and enemy team, giving you the two highest-leverage ban targets for your exact situation.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-5">
+          How do perk choices affect counter-picking strategy in Overwatch 2?
+          <span class="faq-chevron" aria-hidden="true">▾</span>
+        </button>
+        <div class="faq-answer" id="faq-5" role="region">
+          <div class="faq-answer-inner">
+            <p>The Overwatch 2 perk system adds a layer of strategic depth on top of the base hero matchup. Each hero unlocks one minor and one major perk during a match, and the right perk choice can significantly enhance your counter-picking effectiveness.</p>
+            <p>Some perks directly improve counter relationships. For example, <strong>Cassidy's Bang Bang perk</strong> (which throws a second Flashbang) dramatically improves his ability to counter mobile heroes like Tracer, because it gives him a follow-up stun if the first grenade misses or if the target blinks away. <strong>Kiriko's Foxtrot perk</strong> (Protection Suzu gives 30% movement speed to all affected allies) makes her Suzu cleanse even more valuable against dive comps, as the speed burst lets protected allies escape the dive safely.</p>
+            <p>When selecting perks, consider what the enemy team is doing and what you need most. If you are being focused heavily, defensive perks that give you sustain or mobility are often more valuable than damage perks. If the enemy has no healing reduction, offensive perks that increase your burst may close fights faster than the current meta expects.</p>
+            <p>CounterPick's Best Perks panel recommends one minor and one major perk for your top hero pick, based on current pick-rate data and the composition context of your specific draft.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
   <div id="slot-modal" class="modal hidden" aria-hidden="true">
     <div class="modal-backdrop" data-close-modal="true"></div>
     <div class="modal-panel">
       <div class="modal-head">
         <h2 id="modal-title">Pick a hero</h2>
-        <button class="icon-btn" id="close-modal-btn" type="button">✕</button>
+        <button class="icon-btn" id="close-modal-btn" type="button" aria-label="Close modal">✕</button>
       </div>
       <p class="modal-copy" id="modal-copy">Choose one item.</p>
       <div id="modal-hero-list" class="modal-hero-list"></div>
@@ -180,6 +577,127 @@
 
   <script src="data.js"></script>
   <script src="script.js?v=7"></script>
+
+  <script>
+    // ══════════════════════════════════════════════════════
+    // HERO DESCRIPTION CARDS — populated from HERO_DB
+    // Adds 150+ word descriptions for each hero using
+    // strategic_rationale + tips from data.js
+    // ══════════════════════════════════════════════════════
+    (function() {
+      const roleColor = { Tank: 'var(--tank)', Damage: 'var(--dps)', Support: 'var(--heal)' };
+
+      // Extended descriptions per hero (150+ words each for SEO density)
+      const HERO_EXTENDED = {
+        "D.Va": "D.Va is one of the most versatile tanks in Overwatch 2, capable of dive, peel, and high-ground pressure all within the same fight. Her Defense Matrix is the single most powerful projectile-deletion tool in the game, able to eat enemy ultimates, grenades, and burst volleys entirely. The core counter-mechanic against D.Va is beam-based weaponry — Zarya's Particle Beam, Symmetra's primary fire, and Moira's damage orb all bypass Defense Matrix entirely, forcing D.Va to trade health rather than cooldowns. Zarya is the definitive D.Va counter because she can charge energy off D.Va's large frame, turning D.Va's aggression into Zarya's power source. In the meta, D.Va excels against hitscan heroes who rely on burst windows her matrix can interrupt.",
+        "Doomfist": "Doomfist is a high-risk, high-reward Tank whose entire kit revolves around mobility: Rocket Punch for gap closing and knockback, Seismic Slam for displacement, and Power Block for converting incoming damage into empowered punch charges. The most effective counters target his mobility dependencies. Aerial heroes like Echo and Pharah are nearly impossible for Doomfist to reach or contest, denying him the close-range environment he needs to create value. Sombra is his single hardest counter — Hack disables every cooldown in his kit, stranding him in melee range with no burst damage, no mobility, and no escape. Mei can use Ice Wall to trap his exit routes, and her freeze can catch him mid-charge.",
+        "Domina": "Domina is a barrier-oriented Tank built around zone control through her hard-light architecture. Her Sonic Repulsors and Barrier Array create structured defensive spaces that reward disciplined positioning. The most effective ways to counter Domina are through raw damage output that overwhelms her segmented barriers and through heroes who can ignore the spatial control she provides. Bastion in Configuration: Assault is the primary counter — the sustained damage throughput can dismantle her barriers faster than she can rotate them. Reinhardt and Zarya counter her at close range where her zone control tools offer less protection. Winston's ability to leap over her Barrier Array and deploy a bubble inside her zone directly negates her defensive positioning advantage.",
+        "Hazard": "Hazard is an aggressive Tank who lacks a traditional shield, instead relying on his Spike Guard damage-reflection passive and the mobility from Violent Leap to create zone control. This playstyle makes him extremely vulnerable to specific debuffs and crowd control. Ana's Biotic Grenade is arguably the strongest counter tool against him — it negates the self-sustain he generates through close-range brawling, effectively removing his ability to recover health mid-fight. Zenyatta's Discord Orb amplifies incoming damage to his large hitbox, making him easier to burst down. Orisa can interrupt Violent Leap with her Javelin, preventing the repositioning that makes Hazard's engage patterns effective. Sombra can Hack his Spike Guard entirely.",
+        "Junker Queen": "Junker Queen is a high-aggression Tank whose sustain model depends entirely on the bleed status she applies with her Jagged Blade and Carnage. This makes her one of the most exploitable tanks in the game when you have the right support on your team. Kiriko's Protection Suzu is the single most devastating counter — it cleanses bleed from all affected allies, negating Junker Queen's sustain and effectively resetting every fight she commits to. Orisa uses Fortify to walk through Junker Queen's knockback tools and Javelin to interrupt her aggression. Bastion can simply out-damage her in a straight exchange, and Mei can use primary fire to slow her while Ice Wall blocks her ability to close distance on isolated targets.",
+        "Mauga": "Mauga is a frontline brawler built around dual miniguns and critical hit synergy with his Cardiac Overdrive sustain cooldown. He relies on Ignition — setting enemies on fire — to trigger his critical hit modifier, making fire-suppression abilities critically important counters. Kiriko's Protection Suzu can cleanse fire status from Mauga's primary target, preventing the critical hit activation window. Sigma's Kinetic Grasp is exceptionally effective because it absorbs Mauga's damage output and converts it into shields, turning his aggression against him. D.Va's Defense Matrix negates his projectile-based damage in short burst windows. Sojourn can build Railgun charge quickly off his large, unshielded frame. Sombra's Hack removes his ability to trigger Cardiac Overdrive.",
+        "Orisa": "Orisa is a fortress Tank whose primary defensive tools — Fortify and Javelin Spin — give her exceptional staying power in sustained fights. Fortify makes her immune to crowd control and reduces damage taken significantly, while Javelin Spin destroys incoming projectiles and boosts movement. Her counters are heroes who can either bypass these defensive cooldowns or outlast them. Bastion's raw damage output in Configuration: Assault is one of the only tools that can pressure Orisa even through her cooldown rotation. Sombra is her hardest counter — Hack removes Fortify entirely, stripping her of the one ability that makes her durable. Zenyatta's Discord Orb forces Orisa to play more conservatively, and Winston can engage inside her Javelin Spin range where projectile-denial matters less.",
+        "Ramattra": "Ramattra is a dual-form Tank who shifts between long-range Omnic Form poke and close-range Nemesis Form brawling, with his Annihilation ultimate enabling devastating sustained area damage. His largest hitbox vulnerabilities are exposed in Nemesis Form. Zenyatta's Discord Orb is devastating in Nemesis Form because Ramattra's enlarged frame makes him easy to track under focused fire. Ana's Sleep Dart catches him mid-pummel when his team loses track of his position. Orisa's Energy Javelin can interrupt his engage. Hazard has emerged as a strong counter-tank, capable of using Jagged Wall to isolate Ramattra and prevent his retreat from an unfavorable fight. Zenyatta's Transcendence hard-counters Annihilation by out-healing its damage in a team cluster.",
+        "Reinhardt": "Reinhardt is the archetypal brawl anchor Tank, built around Barrier Field as a mobile team shield and Earthshatter as a teamfight-winning ultimate. His counterplay exploits the fundamental limitation of a directional shield: it can only face one direction. Ramattra in Nemesis Form punches through Barrier Field entirely, neutralizing his primary defensive tool. Sombra can Hack him to drop the barrier, immediately exposing him and his team. Aerial heroes like Pharah and Junkrat fire over the shield with arcing projectiles, forcing him to choose between shielding his team and protecting himself from above. Fire Strike passed through the barrier from the front is his only real poke tool, so preventing Fire Strike angles limits his combat impact significantly.",
+        "Roadhog": "Roadhog is a self-sustaining Tank whose entire value proposition revolves around Chain Hook — a long-range pull that brings enemies into point-blank shotgun range for an almost guaranteed kill. His secondary value is Take a Breather, a healing cooldown that recovers a substantial amount of health but leaves him vulnerable during the animation. Ana is his most complete counter: Biotic Grenade lands easily on his large hitbox and completely negates Take a Breather's healing, turning his primary sustain into wasted time. Orisa can Fortify through his hooks and Javelin to interrupt his heal animation. Long-range hitscan heroes like Ashe and Sojourn build ultimate charge quickly off his massive health pool and can headshot him from ranges where his Scrap Gun loses effectiveness.",
+        "Sigma": "Sigma is a cerebral Tank who creates space through Accretion, barrier management, and Kinetic Grasp — a projectile-absorbing cooldown that converts 40% of absorbed damage into shields. His core vulnerability is beam-based damage that bypasses Kinetic Grasp entirely. Zarya is the definitive counter: her Particle Beam passes through Kinetic Grasp and she gains energy from Sigma's predictable primary fire, turning his pressure into her power. Ramattra's Nemesis Form punches through his Experimental Barrier directly. Sombra's Hack is critical for forcing the barrier drop — without his cooldown rotation, Sigma's durability collapses quickly under focused fire. Bastion can out-damage his barrier in Configuration: Assault faster than he can replenish it.",
+        "Winston": "Winston is a dive Tank whose Tesla Cannon, Barrier Projector, and Jump Pack enable rapid backline engagement. He is designed to close distance on high-value targets, create space inside the bubble, and disengage before peel arrives. His counters exploit the fact that he must be in close range to deal damage and that his barrier has limited health. Bastion in turret form can destroy both the barrier and Winston's health pool before he secures a kill. Reaper's close-range lifesteal out-sustains Winston inside the bubble, killing him at the range he is strongest. D.Va can follow his jumps and micro-missile him down. Junkrat's concussion mines can punish predictable jump landings. Zarya can beam him down inside his own bubble.",
+        "Wrecking Ball": "Wrecking Ball is the most mobility-dependent Tank in Overwatch 2, using Grapple for high-speed rolling, Pile Driver for area displacement, and Adaptive Shields for burst survivability. His counterplay focuses on disabling his mobility or rooting him during the brief windows when he transitions between ball and biped forms. Sombra's Hack is the definitive hard counter — it forces him out of ball form instantly and removes all cooldowns, leaving him in a vulnerable biped state with no escape tools. Cassidy's Magnetic Grenade and Brigitte's Shield Bash are both effective interrupts. Roadhog's Chain Hook catches him during grapple arcs. Mizuki's Binding Chain can root him in place, completely ending his engagement.",
+        "Zarya": "Zarya is a charge-based Tank whose Particle Beam scales from minimal damage at zero energy to devastating beam pressure at maximum energy. Her two Personal and Projected Barriers are designed to absorb incoming burst damage and convert it into charge. The most effective strategy against Zarya is denying her the ability to farm charge. Heroes who deal sustained damage she cannot bubble counter her best. Reinhardt's hammer swings in close quarters put constant pressure that Zarya cannot bubble repeatedly. High-damage hitscan heroes like Soldier: 76 and Ashe force her to burn bubbles defensively rather than offensively. Lifeweaver's Life Grip can pull a teammate out of Projected Barrier before Zarya gets charge, wasting the bubble entirely.",
+        "Ashe": "Ashe is a mid-to-long-range Damage hero who uses her lever-action rifle, Dynamite, and Coach Gun to create sustained threat from stable angles. Her strength is the ability to farm Bob (her ultimate) from safe positions through consistent damage output. The most effective counters are dive heroes who remove her from stable positioning. Winston and D.Va can both reach her perch quickly and force her to use Coach Gun defensively rather than offensively. Genji can close distance through Deflect if Ashe commits to firing. Widowmaker can out-range her at extreme distances where Ashe's rifle loses accuracy at full spread. Kiriko can mitigate her output by protecting priority targets and forcing Ashe to burn more ammo per fight.",
+        "Bastion": "Bastion is a stationary Damage hero whose Configuration: Assault turret form deals exceptional burst damage with reduced mobility. His counter-picking weaknesses are well-documented. Genji's Deflect can reflect his entire Magazine back at him during turret form, potentially killing him with his own damage. Sigma's Kinetic Grasp absorbs a full Bastion magazine and generates massive shields. Ana's Sleep Dart removes him from a fight mid-configuration. Junkrat can bomb him from over obstacles or through barriers. Widowmaker and Hanzo can counter-snipe his stationary position. His primary strategic counter, however, is mobility — heroes that keep moving and attack from varied angles prevent him from locking onto a single target.",
+        "Cassidy": "Cassidy is a reliable mid-range Damage hero who combines consistent hitscan output with Magnetic Grenade for burst and Flashbang for anti-mobility. He counters flankers and dive heroes who need to close distance, but struggles against long-range snipers who can eliminate him before he reaches his effective range. Widowmaker can land lethal headshots from ranges Cassidy cannot effectively punish. Pharah stays above him at distances where her rockets outdamage his revolver. Ashe can out-range him on maps with long sightlines. His primary strength is his reliability — in a meta with many mobile flankers, Cassidy's Magnetic Grenade provides consistent counter-dive utility that most damage heroes cannot match.",
+        "Echo": "Echo is a high-mobility Damage hero who combines aerial maneuverability with Sticky Bombs, Focusing Beam, and her Duplicate ultimate. Her counters are hitscan heroes who can track her in the air and mid-range burst heroes who punish her approach phase. Cassidy, Ashe, Widowmaker, and Soldier: 76 all have the tracking capacity to pressure her during flight. D.Va can follow her aerial positioning and use micro-missiles effectively. Her biggest strategic counter is positioning discipline on the enemy team — Echo's Duplicate requires getting close enough to cast, so teams that protect their high-value tank counters from Duplicate reach deny a key part of her value.",
+        "Freja": "Freja is an aerial Damage hero who uses Updraft and Quick Dash to create elevated angles and mobile threat patterns. Similar to Pharah, she is most vulnerable to hitscan heroes who can track her movement through the air. Cassidy and Soldier: 76 can follow her movement patterns with consistent aim. D.Va is a strong mechanical counter because she can fly to Freja's elevated positions and use Defense Matrix to eat her projectiles while closing distance. The most effective defensive measure is maintaining high-ground control before Freja establishes it — once she has elevation advantage and flight fuel available, removing her becomes significantly harder.",
+        "Genji": "Genji is a flanker Damage hero whose Deflect, Swift Strike dash, and Dragonblade ultimate make him the most complete single-target eliminator in close quarters. His core mechanical weakness is beam-based damage: Deflect only works against projectiles, not beams or melee. Moira's primary fire requires no aim and can drain his health faster than he can regenerate. Symmetra's primary beam charges up off his high health, and her turrets lock onto him in flanking corridors he relies on. Winston's Tesla Cannon bypasses Deflect entirely. Zarya's beam can pressure him while he tries to set up. The general anti-Genji principle is: if you can't deflect the damage, he loses most of his defensive agency.",
+        "Hanzo": "Hanzo is a projectile-based Damage hero whose Storm Arrows, Sonic Arrow, and Dragonstrike ultimate provide burst damage and information-gathering at mid-to-long range. His counters are heroes who can reach him quickly before he repositions. Winston and D.Va can dive onto him and force close-range duels where his charging bow is at a disadvantage. Echo and Genji can outmaneuver him in three-dimensional space. His Lunge ability gives him some vertical escape, but it has a cooldown — dive heroes that time their engagement for the post-Lunge window deny his escape. Sonic Arrow repositioning after a pick is crucial; heroes that track his previous position can anticipate and punish his next perch.",
+        "Junkrat": "Junkrat is a ground-based area-denial Damage hero whose Frag Launcher and Concussion Mines perform best in tight corridors and around corners where enemies cannot dodge his arcing grenades. His fundamental vulnerability is aerial heroes who exist above his damage plane entirely. Pharah can float above his grenades indefinitely on maps with open sky. Echo's mobility allows her to stay above his effective range on vertical terrain. Widowmaker can eliminate him from range where his grenades have zero chance of connecting. His Rip-Tire ultimate, while powerful, is countered by D.Va's Defense Matrix and any hero with enough damage to destroy the tire before it reaches the team.",
+        "Mei": "Mei is a crowd-control-focused Damage hero who uses Endothermic Blaster to slow and freeze enemies, Ice Wall to divide fights, and Cryo-Freeze for personal survival. Her counters target her reliance on cooldowns and predictable positioning. Orisa's Fortify makes her immune to Mei's slow, the most important part of her kit. Kiriko's Protection Suzu cleanses freeze status, preventing the guaranteed kill setup Mei relies on after a full freeze cycle. Pharah exists above Ice Wall's maximum height on most maps. Sombra's Hack prevents Mei from entering Cryo-Freeze, removing her panic button. D.Va can fly over Ice Walls and use Defense Matrix to absorb her primary fire.",
+        "Pharah": "Pharah is an aerial Damage hero whose rockets dominate at medium range from elevated positions, where she is immune to most ground-based threats. Her core vulnerability is hitscan heroes — the only reliable way to pressure her in the air is tracking her movement with pinpoint accuracy. Cassidy can reliably land shots on her predictable aerial arcs. Widowmaker can headshot her during hover. Soldier: 76 provides sustained damage pressure. Symmetra turrets on high ground are an underrated soft counter, creating chip damage that pressures her health outside healing range. The most effective anti-Pharah measure is eliminating her Mercy pocket — Pharah alone is significantly less threatening than a Pharmercy duo.",
+        "Reaper": "Reaper is a close-range burst Damage hero whose shotguns deal enormous damage within five meters and whose Wraith Form provides an emergency escape or repositioning tool. His core weakness is being kited to ranges outside his optimal zone. D.Va's Defense Matrix can absorb his entire shotgun volley, negating his burst window. Pharah can stay above him indefinitely. Echo can stay aerial to avoid his close-range zone. His Wraith Form counter is any hero who can track him during the movement phase — since Wraith Form does not grant invisibility, just immunity to projectiles, heroes like Zenyatta can still Discord Orb him and damage him with melee. A patched note removed debuff cleansing from Wraith Form, making it purely an escape tool now.",
+        "Sojourn": "Sojourn is a high-mobility burst Damage hero who uses Power Slide and sustained fire to charge her Railgun, then converts that charge into a precise burst shot capable of instakilling most support heroes. Her counters are heroes who can deny her sightlines or pressure her before she charges rail. D.Va's Defense Matrix is the most direct counter — it can eat Railgun shots entirely. Widowmaker out-ranges her on maps with very long sightlines, as Sojourn's optimal range is medium rather than extreme. Winston and Tracer can dive her before she builds full charge on their approach. The key timing window against Sojourn is immediately after she Power Slides — she is repositioning and cannot fire accurately for a brief moment.",
+        "Soldier:76": "Soldier: 76 is a reliable all-rounder Damage hero who combines hitscan pulse rifle fire with Helix Rockets for burst, Sprint for repositioning, and Biotic Field for self-sustain. His greatest strength is consistency: he can deal reliable damage from any distance and sustain himself without support. His counters are heroes who either out-range him or force him into disadvantageous close quarters. D.Va can dive him and deny Biotic Field by fighting him away from it. Winston's bubble traps him outside his own field. Widowmaker and Ashe can out-damage him at extreme ranges where his pulse rifle falls off in effectiveness. Lúcio's Speed Aura lets the enemy team avoid his Tactical Visor line-of-sight by moving faster than he can track.",
+        "Sombra": "Sombra is a disruptive Damage hero whose Hack ability disables enemy cooldowns and ultimates for four seconds, and whose EMP ultimate removes shields and Hacks every enemy in range simultaneously. Her counters are heroes who can detect or interrupt her in stealth. Hanzo's Sonic Arrow is the primary tool for revealing her invisibility. Moira's primary fire auto-aims and can tag an invisible Sombra nearby. Brigitte's Shield Bash interrupts Hack before it completes. Kiriko can cleanse Hack with Protection Suzu. Zenyatta's Discord Orb, once applied, persists even through stealth, revealing Sombra's position visually and amplifying damage on her. The general anti-Sombra principle: protect your highest-value targets from isolation and ensure your supports have cleanse tools available.",
+        "Symmetra": "Symmetra is a specialist Damage hero who places up to three Sentry Turrets and uses her Photon Projector to create zone control in tight spaces. Her primary fire charges up dramatically off large targets, reaching maximum damage quickly on tanks. Her counters are heroes who can efficiently clear turrets or avoid her primary fire range. Winston's Tesla Cannon is area-of-effect and immediately destroys turrets in range. Zarya can actually benefit from Symmetra's turrets, charging energy off their damage. Pharah can fly above turrets and destroy them from elevation. Widowmaker can snipe turret clusters from range. The fundamental anti-Symmetra principle: do not walk through a corridor you haven't scouted, because layered turrets in an unscouted path can melt even tanks before they can react.",
+        "Torbjörn": "Torbjörn is a defensive Damage hero whose deployable turret provides consistent area coverage and whose Overload ability temporarily enhances his combat effectiveness. His primary counter-play target is the turret itself — eliminating it before engaging removes most of his team value. Winston's Tesla Cannon is the fastest turret-clearing tool, instantly destroying it from safe range inside a bubble. Ramattra's Nemesis Form punches can destroy turrets quickly. Sombra can Hack the turret to take it offline without destroying it, denying its damage during a critical push. Widowmaker can snipe turrets from beyond their attack range. Junkrat can spam grenades around corners where the turret cannot track him. Molten Core is best countered by spreading out so not all heroes are affected simultaneously.",
+        "Tracer": "Tracer is a high-speed flanker Damage hero who uses three Blink charges and Recall to evade damage while dealing burst from extremely close range. Her counters are heroes with area-of-effect damage, auto-targeting tools, or burst that can kill her before she can Recall. Torbjörn's turret auto-locks onto her regardless of blink direction and maintains consistent tracking. Moira's primary fire home seeks without aim, effectively tagging her through blink patterns. Symmetra's primary beam also auto-aims. Cassidy's Magnetic Grenade, once attached, cannot be blinked off — it follows her through all three blink charges and deals bonus damage. The counter principle against Tracer is: if you can't aim consistently enough to punish her, use tools that don't require tracking.",
+        "Widowmaker": "Widowmaker is a scoped-precision Damage hero who can instakill most support heroes with a fully charged headshot from any range. Her primary weakness is dive heroes who can reach her elevated position before she can grapple away. Winston is her archetypal counter — he can leap directly to her perch, and his Tesla Cannon deals unavoidable close-range damage she cannot snipe her way out of. D.Va can fly to her position. Wrecking Ball can swing directly to her sightline and disrupt her aim. Sombra can sneak up and secure the kill before she grapples. Lúcio's Speed Aura allows her targets to move faster than her tracking expects. The general counter to Widowmaker is: remove her from her preferred position before she gets value, not after.",
+        "Ana": "Ana is the most impactful support hero in Overwatch 2, providing team-healing through Biotic Rifle and the game-defining Biotic Grenade that negates all healing in its area. Her Nano Boost ultimate dramatically amplifies a single ally's combat effectiveness. Her counters are heroes that can force her out of the backline positions she needs to play safely. Winston can bubble-jump directly onto her. Sombra can Hack her to prevent Sleep Dart or Grenade at critical moments. Kiriko's Protection Suzu cleanses Biotic Grenade's anti-heal effect, partially nullifying her impact. Widowmaker can out-snipe her from longer range. The most effective way to manage Ana is coordinating a dive that arrives before she can Sleep Dart the initiator — a Sombra Hack into a Winston jump removes her primary defensive tools simultaneously.",
+        "Baptiste": "Baptiste is a combat-oriented support who provides healing through Immortality Field (preventing allies from dying for its duration) and Amplification Matrix (doubling all projectile damage passing through it). His counters are heroes who can destroy the Immortality Field drone, and flankers who can pressure him before he sets up. Sombra can Hack the drone to take it offline without destroying it. High-mobility flankers like Reaper and Venture can pressure him away from safe positioning. His Amplification Matrix amplification is best countered by positioning the fight so the enemy cannot stack inside it — mobile teams that scatter break the Matrix's value. Exo Boot high ground play makes him harder to dive but more exposed to hitscan.",
+        "Brigitte": "Brigitte is a close-range support who provides burst healing through Repair Pack and sustained healing through Inspire (triggered by landing melee hits). Her Shield Bash stuns flankers and her armor passive gives her resilience in brawl. Her counters target her need to stay within melee range to provide healing. Ramattra's Nemesis Form punches through her Rally shield. Junkrat's grenades can arc around her shield. Pharah and other aerial heroes can fire from above, bypassing her shield's coverage angle. Baptiste and long-range supports out-range her healing radius. The anti-Brigitte principle: if you can't flank her safely, force fights at ranges beyond her primary fire and shield bash distance where Inspire doesn't proc.",
+        "Illari": "Illari is a damage-heavy support who combines her Solar Rifle burst capability with the Healing Pylon for ambient team-healing. Her Outburst ability provides burst mobility. Her counters focus on destroying the Pylon, which provides the passive healing she relies on when not actively beaming allies. D.Va can destroy the Pylon instantly with micro-missiles at range. Any hero with area-of-effect damage can clear it before it provides value. Genji can deflect her primary fire back at her. Sombra can Hack her movement abilities. Kiriko is a soft counter in mirror-support scenarios because Suzu can save targets she tries to burst down. High-mobility dives (Winston, Tracer) catch her without an escape before she can Outburst away.",
+        "Kiriko": "Kiriko is a mobile support whose Protection Suzu cleanses negative effects, Swift Step provides teleportation to allies, and Kitsune Rush dramatically accelerates her team's combat tempo. She is widely considered the most impactful support in the current meta due to Suzu's versatility. Her counters are heroes who can pressure her out of the flanking positions she relies on and heroes who can close the gap faster than Swift Step can reposition her. Winston and Tracer can dive her and force Swift Step usage defensively. Pharah and Echo can attack from angles that bypass traditional cover. Aerial heroes create engagement angles that Swift Step's single-ally teleportation cannot fully escape. The general anti-Kiriko principle: force her to use Swift Step reactively rather than proactively.",
+        "Lifeweaver": "Lifeweaver is a utility-focused support whose Life Grip can pull allies out of dangerous situations, Petal Platform provides vertical repositioning, and Rejuvenating Dash gives modest mobility. His counters are heroes who exploit his relative lack of offensive pressure or aggressive mobility tools. Sombra can Hack him to prevent Life Grip at a critical moment. D.Va can block his Thorn Volley and Life Grip projectiles with Defense Matrix. Pharah can fire from above his typical healing range. The most impactful way to counter Lifeweaver is timing big ultimates or aggressive engages for the moment right after he uses Life Grip — his most powerful cooldown has a meaningful recharge window during which he cannot save a second target.",
+        "Lúcio": "Lúcio is a mobile support who provides team-wide healing or speed auras through Crossfade, wall-rides for superior positioning, and Sound Barrier as a fight-wide emergency shield ultimate. His counters are heroes who can lock him down during wall-ride or catch him off surfaces. Sombra's Hack stops Lúcio's wall-ride and disables his aura switching. Ramattra's Vortex grounds him during aerial segments and prevents escape. Cassidy's Magnetic Grenade sticks to him through his movement. Brigitte can Shield Bash him off walls. Mizuki's Binding Chain roots him in place. The fundamental anti-Lúcio principle: remove his wall-ride freedom to eliminate the positioning advantage that makes him slippery, and his offensive contribution is relatively low.",
+        "Mercy": "Mercy is a pocket-focused support whose Caduceus Staff alternates between healing beam and damage boost beam, with Guardian Angel providing chase mobility. Her Resurrect allows a five-second death reversal of a single ally. Her counters are flankers who can isolate and eliminate her while she is attached to her pocket target. Sombra's Hack mid-Guardian Angel is often a death sentence. Widowmaker can headshot her from ranges she cannot easily Guardian Angel out of. Cassidy and Soldier: 76 provide sustained fire that out-damages her passive health regeneration. The most effective anti-Mercy strategy is eliminating her pocket target first — a Mercy without a high-damage carry to amplify provides dramatically less value.",
+        "Moira": "Moira is a close-range support who combines self-sustaining damage orbs with high-throughput healing spray. Her Fade ability provides temporary invincibility and escape. She functions best in close-range brawl scenarios where enemy positioning gives her nearby targets for her primary fire. D.Va's Defense Matrix can absorb her damage orbs and her healing orbs targeted at enemies. Brigitte can out-brawl her in close quarters with consistent melee poke. Reaper surprisingly counters Moira in direct duels because his lifesteal matches her sustain. The general anti-Moira principle: she has relatively low range and no long-distance healing tool, so maintaining distance and attacking from angles beyond her spray range reduces her impact significantly.",
+        "Zenyatta": "Zenyatta is a long-range support who applies Discord Orb (increasing all damage to the target) and Harmony Orb (healing a single ally) passively while dealing exceptional damage with his Orbs of Destruction. He is extremely fragile — his 50-base-HP body makes him one of the most vulnerable heroes in the game to any burst. Flankers can eliminate him before his team can react: Tracer, Sombra, and Junker Queen all represent existential threats. Sombra's EMP removes his 225 shield health instantly, leaving him with 50 HP. Zarya can beam him down from medium range before he can retreat. The anti-Zenyatta principle: he has no mobility tool whatsoever, which means any flanker who reaches him with burst available will likely secure an easy elimination.",
+        "Anran": "Anran is a close-to-medium range Damage hero built around persistent fire application and sustained burn damage. Her Inferno Rush closes distance quickly, and her kit rewards staying near enemies long enough to maximize burn stacks. Cassidy's Flashbang is the most direct counter tool — interrupting Inferno Rush mid-dash denies the close-range engagement she needs to apply fire. Kiriko's Protection Suzu cleanses fire status entirely, resetting the fight and negating her damage output. Reaper can out-sustain her fire damage in close-range trades through his lifesteal passive. The key strategic note against Anran: do not let her team engage while she is already in position — her value spikes dramatically when she can initiate before the enemy support reacts.",
+        "Vendetta": "Vendetta is a diving Damage hero whose Whirlwind Dash and overhead attack mechanics reward precise timing on approach and follow-through. Cassidy's Magnetic Grenade is her most reliable hard counter — it sticks through her dash animation and deals bonus damage, punishing her commitment to a dive. Sigma's Accretion (rock) can stun her mid-approach. Junkrat's Steel Trap placed on predictable approach corridors can root her before she reaches her target. Mei's slow can interrupt her follow-up after an initial dash. The general counter principle is to react to her approach timing rather than her position — Vendetta wants to complete her full combo before peel arrives, so any stun or root after the first dash breaks her kit.",
+        "Venture": "Venture is a burrowing Damage hero who uses Drill Dash and the Burrow ability to engage from unexpected angles beneath the ground. Their kit rewards ambush timing and punishes enemies who cluster in predictable formations. Mei can freeze Venture even during some movement animations, catching them in mid-approach. Sombra's Hack prevents Burrow usage, stranding them above ground without their primary escape tool. Pharah and Echo can stay above the engagement zone where Venture's projectiles have limited upward range. The key counter principle: deny their ability to re-burrow after an initial attack. Venture needs Burrow to escape after a dive — if their cooldown is unavailable, they are vulnerable to peel during the follow-up.",
+        "Jetpack Cat": "Jetpack Cat is a mobile support who can carry an ally during flight, providing healing through Biotic Pawjectiles while maintaining aerial positioning. Hitscan heroes are her most consistent counters because her flight path is relatively linear compared to other aerial heroes, making her easier to track. Soldier: 76, Cassidy, and Ashe can maintain accuracy during her flight. Torbjörn's auto-aim turret provides consistent damage regardless of her aerial movement. Sombra's Hack can disable her flight abilities mid-carry, dropping any transported ally. The counter principle: attack her during the transition phases when she is carrying an ally — her movement is most predictable when she is focused on positioning a towed teammate.",
+        "Juno": "Juno is a mobile support who uses aerial movement abilities for sustained positioning across multiple combat zones. Her Pulsar Torpedoes provide burst healing and damage in a single ability, and Glide Boost gives her the sustained aerial maneuverability to threaten from elevated positions. Hitscan heroes can track her more reliably than projectile heroes because her movement arcs are predictable. Widowmaker and Ashe can eliminate her from long range. Cassidy can interrupt her movement abilities with Magnetic Grenade. Sombra can Hack her to remove mobility tools mid-flight. The strategic note on Juno: she is strongest when she can maintain wide team sightlines — denying high ground and forcing her down to the brawl removes her ability positioning advantage.",
+        "Mizuki": "Mizuki is a control-oriented support whose Binding Chain can root enemies in place, creating opportunities for follow-up from teammates. Mizuki lacks effective long-range answers, making sniper heroes and aerial heroes especially difficult matchups. Pharah can stay above his effective range and fire from angles he cannot contest. Junkrat's arcing grenades curve into positions behind cover where Mizuki tends to play. Widowmaker and Ashe can eliminate him before he can use his control tools. The strategic counter to Mizuki: pair mobile dive heroes who can press his lack of escape tools. He can root divers with Binding Chain once, but if the initial dive is multi-person, he cannot neutralize all threats before his cooldown recharges.",
+        "Wuyang": "Wuyang is a water-manipulation support hero who uses projectile control and healing tools to protect the team from a mid-range position. D.Va and Winston can dive Wuyang before his water-based abilities charge to full effectiveness. Sombra's Hack disables his core manipulation abilities, leaving him without either healing or control tools until the hack expires. The counter principle with Wuyang is pressure through aggression — his kit rewards methodical play from safe distance, so forcing fast engagements that don't give him time to cycle abilities reduces his effectiveness significantly. Heroes with burst damage that arrive before his team can peel him are his most consistent counters."
+      };
+
+      const grid = document.getElementById('hero-desc-grid');
+      if (!grid || typeof HERO_DB === 'undefined') return;
+
+      HERO_DB.forEach(hero => {
+        const desc = HERO_EXTENDED[hero.name] || hero.strategic_rationale || '';
+        if (!desc) return;
+
+        const roleClass = hero.role === 'Tank' ? 'var(--tank)' : hero.role === 'Damage' ? 'var(--dps)' : 'var(--heal)';
+
+        const card = document.createElement('article');
+        card.className = 'hero-desc-card';
+        card.setAttribute('itemscope', '');
+        card.setAttribute('itemtype', 'https://schema.org/Article');
+
+        card.innerHTML = `
+          <div class="hero-desc-header">
+            <span class="hero-desc-emoji" role="img" aria-label="${hero.name} hero icon in Overwatch 2">${hero.emoji}</span>
+            <div class="hero-desc-meta">
+              <span class="hero-desc-name" itemprop="headline">${hero.name}</span>
+              <span class="hero-desc-role" style="color:${roleClass}">${hero.role}</span>
+            </div>
+          </div>
+          <p class="hero-desc-body" itemprop="description">${desc}</p>
+          <div class="hero-desc-counters">
+            <span>Countered by:</span>
+            <div class="counter-tags">
+              ${hero.weak_against.map(c => `<span class="counter-tag" title="How to counter ${hero.name} in Overwatch 2">${c}</span>`).join('')}
+            </div>
+          </div>`;
+
+        grid.appendChild(card);
+      });
+    })();
+
+    // ══════════════════════════════════════════════════════
+    // FAQ ACCORDION
+    // ══════════════════════════════════════════════════════
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+        const targetId = btn.getAttribute('aria-controls');
+        const answer = document.getElementById(targetId);
+
+        // Close all others
+        document.querySelectorAll('.faq-question').forEach(other => {
+          if (other !== btn) {
+            other.setAttribute('aria-expanded', 'false');
+            const otherId = other.getAttribute('aria-controls');
+            const otherAnswer = document.getElementById(otherId);
+            if (otherAnswer) otherAnswer.classList.remove('open');
+          }
+        });
+
+        btn.setAttribute('aria-expanded', String(!expanded));
+        if (answer) answer.classList.toggle('open', !expanded);
+      });
+    });
+  </script>
 
   <footer class="site-footer">
     <div class="footer-inner">
